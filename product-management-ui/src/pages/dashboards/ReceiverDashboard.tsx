@@ -1,12 +1,16 @@
 import React from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import { authService } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const ReceiverDashboard: React.FC = () => {
     const user = authService.getUser();
+    const navigate = useNavigate();
 
     const navItems = [
         { icon: '📊', label: 'Dashboard', active: true },
+        { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/receiver/purchase-orders') },
+        { icon: '📦', label: 'Products Management', onClick: () => navigate('/receiver/products') },
         { icon: '📦', label: 'Incoming Shipments' },
         { icon: '✅', label: 'Received Items' },
         { icon: '🔄', label: 'Returns' },

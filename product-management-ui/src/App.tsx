@@ -16,6 +16,7 @@ import MyRequests from './pages/my-requests';
 import PendingReviews from './pages/pending-reviews';
 import ApprovedRequests from './pages/approved-requests';
 import RejectedRequests from './pages/rejected-requests';
+import PurchaseOrders from './pages/purchase-orders';
 
 function App() {
   return (
@@ -152,6 +153,18 @@ function App() {
         } />
         <Route path="/approver/products" element={
           <ProtectedRoute allowedRoles={['Approver']}>
+            <ProductsManagement />
+          </ProtectedRoute>
+        } />
+
+        {/* Receiver Management Pages */}
+        <Route path="/receiver/purchase-orders" element={
+          <ProtectedRoute allowedRoles={['Receiver']}>
+            <PurchaseOrders />
+          </ProtectedRoute>
+        } />
+        <Route path="/receiver/products" element={
+          <ProtectedRoute allowedRoles={['Receiver']}>
             <ProductsManagement />
           </ProtectedRoute>
         } />

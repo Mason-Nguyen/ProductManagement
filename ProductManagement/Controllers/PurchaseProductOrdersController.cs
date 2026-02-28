@@ -20,17 +20,24 @@ namespace ProductManagement.Controllers
             _context = context;
         }
 
-        private static PurchaseProductOrderDto MapToDto(PurchaseProductOrder ppo) => new()
+        private static PurchaseProductOrderDto MapToDto(PurchaseProductOrder ppo, long quantityRequest = 0) => new()
         {
             Id = ppo.Id,
             ProductId = ppo.ProductId,
+            ProductCode = ppo.Product.ProductCode,
             ProductName = ppo.Product.ProductName ?? ppo.Product.ProductCode,
+            Category = ppo.Product.Category,
+            Unit = ppo.Product.Unit,
+            Price = ppo.Product.Price,
+            InStock = ppo.Product.InStock,
+            MinInStock = ppo.Product.MinInStock,
+            QuantityRequest = quantityRequest,
             PurchaseOrderId = ppo.PurchaseOrderId,
             PurchaseOrderTitle = ppo.PurchaseOrder.Title,
             ImportedDate = ppo.ImportedDate,
             Quantity = ppo.Quantity,
             CheckedUserId = ppo.CheckedUserId,
-            CheckedUserName = ppo.CheckedUser.Username,
+            CheckedUserName = ppo.CheckedUser?.Username,
             Comment = ppo.Comment
         };
 
@@ -45,7 +52,7 @@ namespace ProductManagement.Controllers
                 .OrderByDescending(ppo => ppo.ImportedDate)
                 .ToListAsync();
 
-            return Ok(orders.Select(MapToDto));
+            return Ok(orders.Select(o => MapToDto(o)));
         }
 
         // GET: api/purchaseproductorders/{id}
@@ -142,6 +149,31 @@ namespace ProductManagement.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Purchase product order deleted successfully." });
+        }
+
+        // GET: api/purchaseproductorders/by-order/{purchaseOrderId}
+        [HttpGet("by-order/{purchaseOrderId}")]
+        public async Task<IActionResult> GetByOrderId(Guid purchaseOrderId)
+        {
+            var orders = await _context.PurchaseProductOrders
+                .Include(ppo => ppo.Product)
+                .Include(ppo => ppo.PurchaseOrder)
+                .Include(ppo => ppo.CheckedUser)
+                .Where(ppo => ppo.PurchaseOrderId == purchaseOrderId)
+                .OrderBy(ppo => ppo.Product.ProductCode)
+                .ToListAsync();
+
+            // Look up QuantityRequest from PurchaseProduct via PurchaseOrder.PurchaseRequestId
+            var purchaseRequestId = orders.FirstOrDefault()?.PurchaseOrder?.PurchaseRequestId;
+            var purchaseProducts = purchaseRequestId.HasValue
+                ? await _context.PurchaseProducts
+                    .Where(pp => pp.RequestId == purchaseRequestId.Value)
+                    .ToListAsync()
+                : new List<PurchaseProduct>();
+
+            var qtyLookup = purchaseProducts.ToDictionary(pp => pp.ProductId, pp => pp.QuantityRequest);
+
+            return Ok(orders.Select(o => MapToDto(o, qtyLookup.GetValueOrDefault(o.ProductId, 0))));
         }
     }
 }

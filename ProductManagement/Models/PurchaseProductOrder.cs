@@ -18,15 +18,15 @@ namespace ProductManagement.Models
 
         public PurchaseOrder PurchaseOrder { get; set; } = null!;
 
-        public DateTime ImportedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? ImportedDate { get; set; }
 
         [Required]
         public int Quantity { get; set; }
 
         [ForeignKey("CheckedUser")]
-        public Guid CheckedUserId { get; set; }
+        public Guid? CheckedUserId { get; set; }
 
-        public User CheckedUser { get; set; } = null!;
+        public User? CheckedUser { get; set; }
 
         [MaxLength(3000)]
         public string? Comment { get; set; }

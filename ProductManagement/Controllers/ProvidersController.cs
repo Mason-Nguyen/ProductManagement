@@ -20,7 +20,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/providers
         [HttpGet]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
         public async Task<IActionResult> GetAll()
         {
             var providers = await _context.Providers
@@ -41,7 +41,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/providers/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var provider = await _context.Providers.FindAsync(id);

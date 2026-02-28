@@ -13,7 +13,7 @@ const ProductsManagement: React.FC = () => {
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
     const canEdit = userRole === 'Requester'; // Only Requester can edit products
-    
+
     const [products, setProducts] = useState<ProductDto[]>([]);
     const [providers, setProviders] = useState<ProviderDto[]>([]);
     const [loading, setLoading] = useState(true);
@@ -51,6 +51,12 @@ const ProductsManagement: React.FC = () => {
                     { icon: '✅', label: 'Approved', onClick: () => navigate('/reviewer/approved-requests') },
                     { icon: '❌', label: 'Rejected', onClick: () => navigate('/reviewer/rejected-requests') },
                     { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/reviewer/providers') },
+                    { icon: '📦', label: 'Products Management', active: true },
+                ];
+            case 'Receiver':
+                return [
+                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/receiver') },
+                    { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/receiver/purchase-orders') },
                     { icon: '📦', label: 'Products Management', active: true },
                 ];
             default:
@@ -121,7 +127,7 @@ const ProductsManagement: React.FC = () => {
     };
 
     const filteredProducts = products.filter((p) => {
-        const matchesSearch = 
+        const matchesSearch =
             p.productCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.providerName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -151,7 +157,7 @@ const ProductsManagement: React.FC = () => {
             <div className="dashboard-content fade-in">
                 {/* Stats */}
                 <div className="stats-grid">
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === null ? 'active' : ''}`}
                         onClick={() => handleFilterClick(null)}
                         style={{ cursor: 'pointer' }}
@@ -160,7 +166,7 @@ const ProductsManagement: React.FC = () => {
                         <div className="stat-value">{products.length}</div>
                         <div className="stat-label">Total Products</div>
                     </div>
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 1 ? 'active' : ''}`}
                         onClick={() => handleFilterClick(1)}
                         style={{ cursor: 'pointer' }}
@@ -169,7 +175,7 @@ const ProductsManagement: React.FC = () => {
                         <div className="stat-value">{products.filter(p => p.inStockStatus === 1).length}</div>
                         <div className="stat-label">In Stock</div>
                     </div>
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 2 ? 'active' : ''}`}
                         onClick={() => handleFilterClick(2)}
                         style={{ cursor: 'pointer' }}
@@ -178,7 +184,7 @@ const ProductsManagement: React.FC = () => {
                         <div className="stat-value">{products.filter(p => p.inStockStatus === 2).length}</div>
                         <div className="stat-label">Almost Out</div>
                     </div>
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 0 ? 'active' : ''}`}
                         onClick={() => handleFilterClick(0)}
                         style={{ cursor: 'pointer' }}
