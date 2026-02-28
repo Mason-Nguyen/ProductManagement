@@ -218,14 +218,14 @@ namespace ProductManagement.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<Guid>("CheckedUserId")
+                    b.Property<Guid?>("CheckedUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(3000)
                         .HasColumnType("nvarchar(3000)");
 
-                    b.Property<DateTime>("ImportedDate")
+                    b.Property<DateTime?>("ImportedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ProductId")
@@ -408,7 +408,7 @@ namespace ProductManagement.Migrations
                             Id = new Guid("a8b9c0d1-e2f3-4a4b-5c6d-7e8f9a0b1c2d"),
                             CreatedDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@productmanagement.com",
-                            Password = "$2a$11$cAjfFSnsdXgd2bTC9LLxEeHbrKTCYSgR2nABDdS0uAjl3VL9Jqo/y",
+                            Password = "$2a$11$c4Sjljr/KnS6zbPCToa72.8.gJYc1E3fROit2JlA6Dr3lNdF19lQG",
                             Phone = "0123456789",
                             RoleId = new Guid("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"),
                             Status = true,
@@ -486,8 +486,7 @@ namespace ProductManagement.Migrations
                     b.HasOne("ProductManagement.Models.User", "CheckedUser")
                         .WithMany()
                         .HasForeignKey("CheckedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ProductManagement.Models.Product", "Product")
                         .WithMany()

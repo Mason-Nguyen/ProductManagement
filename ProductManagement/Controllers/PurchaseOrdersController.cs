@@ -182,5 +182,238 @@ namespace ProductManagement.Controllers
 
             return Ok(new { message = "Purchase order deleted successfully." });
         }
+        // GET: api/purchaseorders/exists-for-request/{purchaseRequestId}
+        [HttpGet("exists-for-request/{purchaseRequestId}")]
+        public async Task<IActionResult> ExistsForRequest(Guid purchaseRequestId)
+        {
+            var exists = await _context.PurchaseOrders
+                .AnyAsync(po => po.PurchaseRequestId == purchaseRequestId);
+
+            return Ok(new { exists });
+        }
+
+        // POST: api/purchaseorders/convert/{purchaseRequestId}
+        [HttpPost("convert/{purchaseRequestId}")]
+        [Authorize(Roles = "Reviewer,Approver,Requester")]
+        public async Task<IActionResult> ConvertFromRequest(Guid purchaseRequestId)
+        {
+            // Get current user ID from JWT token
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var currentUserId))
+                return Unauthorized(new { message = "Invalid user token." });
+
+            // Validate PurchaseRequest exists and is approved
+            var purchaseRequest = await _context.PurchaseRequests
+                .Include(pr => pr.Reviewer)
+                .Include(pr => pr.Approver)
+                .FirstOrDefaultAsync(pr => pr.Id == purchaseRequestId);
+
+            if (purchaseRequest == null)
+                return NotFound(new { message = "Purchase request not found." });
+
+            if (purchaseRequest.Status != 2)
+                return BadRequest(new { message = "Only approved purchase requests can be converted to orders." });
+
+            // Check for duplicate conversion
+            var alreadyConverted = await _context.PurchaseOrders
+                .AnyAsync(po => po.PurchaseRequestId == purchaseRequestId);
+
+            if (alreadyConverted)
+                return BadRequest(new { message = "This request has already been converted to a purchase order." });
+
+            // Create PurchaseOrder
+            var purchaseOrder = new PurchaseOrder
+            {
+                Id = Guid.NewGuid(),
+                Title = purchaseRequest.Title,
+                Description = purchaseRequest.Description,
+                Urgent = purchaseRequest.Urgent,
+                Status = 0, // Draft
+                ReviewerId = purchaseRequest.ReviewerId!.Value,
+                ApproverId = purchaseRequest.ApproverId!.Value,
+                CreatedUserId = currentUserId,
+                CreatedDate = DateTime.UtcNow,
+                ModifiedDate = DateTime.UtcNow,
+                ReviewerComment = purchaseRequest.ReviewerComment,
+                OrderingComment = null,
+                TotalPrice = 0,
+                PurchaseRequestId = purchaseRequestId
+            };
+
+            _context.PurchaseOrders.Add(purchaseOrder);
+
+            // Create PurchaseProductOrder for each product in the request
+            var purchaseProducts = await _context.PurchaseProducts
+                .Where(pp => pp.RequestId == purchaseRequestId)
+                .ToListAsync();
+
+            foreach (var pp in purchaseProducts)
+            {
+                _context.PurchaseProductOrders.Add(new PurchaseProductOrder
+                {
+                    Id = Guid.NewGuid(),
+                    ProductId = pp.ProductId,
+                    PurchaseOrderId = purchaseOrder.Id,
+                    ImportedDate = null,
+                    Quantity = 0,
+                    CheckedUserId = null,
+                    Comment = null
+                });
+            }
+
+            // Update request status to Converted (5)
+            purchaseRequest.Status = 5;
+            purchaseRequest.ModifiedDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            // Reload with navigation properties
+            await _context.Entry(purchaseOrder).Reference(po => po.Reviewer).LoadAsync();
+            await _context.Entry(purchaseOrder).Reference(po => po.Approver).LoadAsync();
+            await _context.Entry(purchaseOrder).Reference(po => po.CreatedUser).LoadAsync();
+
+            return Ok(MapToDto(purchaseOrder));
+        }
+
+        // PUT: api/purchaseorders/{id}/set-ordering
+        [HttpPut("{id}/set-ordering")]
+        [Authorize(Roles = "Receiver")]
+        public async Task<IActionResult> SetOrdering(Guid id)
+        {
+            var order = await _context.PurchaseOrders
+                .Include(po => po.Reviewer)
+                .Include(po => po.Approver)
+                .Include(po => po.CreatedUser)
+                .FirstOrDefaultAsync(po => po.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Purchase order not found." });
+
+            if (order.Status != 0)
+                return BadRequest(new { message = "Only draft orders can be set to ordering." });
+
+            order.Status = 1; // Ordering
+            order.ModifiedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(order));
+        }
+
+        // PUT: api/purchaseorders/{id}/cancel
+        [HttpPut("{id}/cancel")]
+        [Authorize(Roles = "Receiver")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            var order = await _context.PurchaseOrders
+                .Include(po => po.Reviewer)
+                .Include(po => po.Approver)
+                .Include(po => po.CreatedUser)
+                .FirstOrDefaultAsync(po => po.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Purchase order not found." });
+
+            if (order.Status != 0 && order.Status != 1)
+                return BadRequest(new { message = "Only draft or ordering orders can be cancelled." });
+
+            order.Status = 3; // Cancelled
+            order.ModifiedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(order));
+        }
+
+        // POST: api/purchaseorders/{id}/import
+        [HttpPost("{id}/import")]
+        [Authorize(Roles = "Receiver")]
+        public async Task<IActionResult> ImportProducts(Guid id, [FromBody] List<ImportProductOrderRequest> items)
+        {
+            // Get current user ID from JWT token
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var currentUserId))
+                return Unauthorized(new { message = "Invalid user token." });
+
+            var order = await _context.PurchaseOrders
+                .Include(po => po.Reviewer)
+                .Include(po => po.Approver)
+                .Include(po => po.CreatedUser)
+                .FirstOrDefaultAsync(po => po.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Purchase order not found." });
+
+            if (order.Status != 1)
+                return BadRequest(new { message = "Only ordering purchase orders can be imported." });
+
+            // Get all product orders for this PO
+            var productOrders = await _context.PurchaseProductOrders
+                .Include(ppo => ppo.Product)
+                .Where(ppo => ppo.PurchaseOrderId == id)
+                .ToListAsync();
+
+            // Get QuantityRequest from PurchaseProduct
+            var purchaseProducts = await _context.PurchaseProducts
+                .Where(pp => pp.RequestId == order.PurchaseRequestId)
+                .ToListAsync();
+            var qtyRequestLookup = purchaseProducts.ToDictionary(pp => pp.ProductId, pp => pp.QuantityRequest);
+
+            // Validate and apply imports
+            foreach (var item in items)
+            {
+                var ppo = productOrders.FirstOrDefault(p => p.Id == item.PurchaseProductOrderId);
+                if (ppo == null)
+                    return BadRequest(new { message = $"Product order {item.PurchaseProductOrderId} not found." });
+
+                var quantityRequest = qtyRequestLookup.GetValueOrDefault(ppo.ProductId, 0);
+                var newTotal = ppo.Quantity + item.Quantity;
+
+                if (newTotal > quantityRequest)
+                    return BadRequest(new { message = $"Import quantity for {ppo.Product.ProductCode} exceeds requested quantity. Max allowed: {quantityRequest - ppo.Quantity}." });
+            }
+
+            // Apply updates
+            foreach (var item in items)
+            {
+                if (item.Quantity <= 0) continue;
+
+                var ppo = productOrders.First(p => p.Id == item.PurchaseProductOrderId);
+                ppo.Quantity += item.Quantity;
+                ppo.ImportedDate = DateTime.UtcNow;
+                ppo.CheckedUserId = currentUserId;
+
+                // Update product InStock
+                ppo.Product.InStock += item.Quantity;
+                // Recalculate InStockStatus
+                if (ppo.Product.InStock == 0)
+                    ppo.Product.InStockStatus = 0; // Out of Stock
+                else if (ppo.Product.InStock > 0 && ppo.Product.InStock < ppo.Product.MinInStock)
+                    ppo.Product.InStockStatus = 2; // Almost Out
+                else
+                    ppo.Product.InStockStatus = 1; // In Stock
+            }
+
+            // Calculate TotalPrice = sum of (quantity * price) for all product orders
+            decimal totalPrice = 0;
+            foreach (var ppo in productOrders)
+            {
+                totalPrice += ppo.Quantity * ppo.Product.Price;
+            }
+            order.TotalPrice = Math.Round(totalPrice, 3);
+
+            // Check if all products fully imported
+            var allFullyImported = productOrders.All(ppo =>
+            {
+                var quantityRequest = qtyRequestLookup.GetValueOrDefault(ppo.ProductId, 0);
+                return ppo.Quantity >= quantityRequest;
+            });
+
+            if (allFullyImported)
+                order.Status = 2; // Done
+
+            order.ModifiedDate = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(order));
+        }
     }
 }

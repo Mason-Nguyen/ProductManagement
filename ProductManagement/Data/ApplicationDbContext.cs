@@ -165,11 +165,12 @@ namespace ProductManagement.Data
                 .HasForeignKey(ppo => ppo.PurchaseOrderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure PurchaseProductOrder -> CheckedUser relationship
+            // Configure PurchaseProductOrder -> CheckedUser relationship (optional)
             modelBuilder.Entity<PurchaseProductOrder>()
                 .HasOne(ppo => ppo.CheckedUser)
                 .WithMany()
                 .HasForeignKey(ppo => ppo.CheckedUserId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure User -> Role relationship

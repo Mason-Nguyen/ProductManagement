@@ -56,7 +56,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/products (only Status = true)
         [HttpGet]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
         public async Task<IActionResult> GetAll()
         {
             var products = await _context.Products
@@ -70,7 +70,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/products/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await _context.Products

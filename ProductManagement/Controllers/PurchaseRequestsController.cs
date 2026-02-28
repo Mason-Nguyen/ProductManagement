@@ -39,6 +39,7 @@ namespace ProductManagement.Controllers
             2 => "Approved",
             3 => "Cancelled",
             4 => "Rejected",
+            5 => "Converted",
             _ => "Unknown"
         };
 

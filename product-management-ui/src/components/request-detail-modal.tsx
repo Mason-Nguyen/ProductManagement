@@ -1,23 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
+import { purchaseOrderService } from '../services/purchase-order-service';
 
 interface RequestDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     request: PurchaseRequestDto | null;
     onSubmit?: (request: PurchaseRequestDto) => Promise<void>;
-    currentUser?: { username: string } | null;
+    currentUser?: { username: string; role?: string } | null;
 }
 
 const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose, request, onSubmit, currentUser }) => {
     const [submitting, setSubmitting] = useState(false);
+    const [converting, setConverting] = useState(false);
     const [error, setError] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
+    const [orderExists, setOrderExists] = useState<boolean | null>(null);
+
+    // Check if a PurchaseOrder already exists for this request
+    useEffect(() => {
+        if (isOpen && request && request.status === 2) {
+            setOrderExists(null);
+            purchaseOrderService.existsForRequest(request.id)
+                .then(exists => setOrderExists(exists))
+                .catch(() => setOrderExists(null));
+        } else {
+            setOrderExists(null);
+        }
+        setError('');
+        setSuccessMsg('');
+    }, [isOpen, request]);
 
     if (!isOpen || !request) return null;
 
     const handleSubmit = async () => {
         if (!request || !onSubmit) return;
-        
+
         try {
             setSubmitting(true);
             setError('');
@@ -35,7 +53,30 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
         }
     };
 
+    const handleConvert = async () => {
+        if (!request) return;
+
+        try {
+            setConverting(true);
+            setError('');
+            setSuccessMsg('');
+            await purchaseOrderService.convertFromRequest(request.id);
+            setSuccessMsg('✅ Successfully converted to Purchase Order!');
+            setOrderExists(true);
+        } catch (err: unknown) {
+            if (err && typeof err === 'object' && 'response' in err) {
+                const axiosErr = err as { response?: { data?: { message?: string } } };
+                setError(axiosErr.response?.data?.message || 'Failed to convert request.');
+            } else {
+                setError('An error occurred while converting the request.');
+            }
+        } finally {
+            setConverting(false);
+        }
+    };
+
     const canSubmit = request.status === 0 && currentUser?.username === request.createdUserName;
+    const canConvert = request.status === 2 && orderExists === false;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -48,6 +89,12 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                 {error && (
                     <div className="modal-error">
                         <span>⚠️</span> {error}
+                    </div>
+                )}
+
+                {successMsg && (
+                    <div className="modal-error" style={{ background: 'rgba(34, 197, 94, 0.1)', borderColor: '#22c55e', color: '#16a34a' }}>
+                        <span></span> {successMsg}
                     </div>
                 )}
 
@@ -148,9 +195,19 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
 
                 <div className="modal-footer">
                     <button className="btn-cancel" onClick={onClose}>Close</button>
+                    {canConvert && (
+                        <button
+                            className="btn-save"
+                            onClick={handleConvert}
+                            disabled={converting}
+                            style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)' }}
+                        >
+                            {converting ? 'Converting...' : '📦 Convert to Purchase Order'}
+                        </button>
+                    )}
                     {canSubmit && (
-                        <button 
-                            className="btn-save" 
+                        <button
+                            className="btn-save"
                             onClick={handleSubmit}
                             disabled={submitting}
                         >
