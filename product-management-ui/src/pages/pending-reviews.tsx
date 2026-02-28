@@ -3,6 +3,8 @@ import DashboardLayout from '../components/DashboardLayout';
 import ReviewDetailModal from '../components/review-detail-modal';
 import { reviewService } from '../services/review-service';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
+import { approvalConfigService } from '../services/approval-config-service';
+import type { ApprovalConfigDto } from '../services/approval-config-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 
@@ -15,6 +17,7 @@ const PendingReviews: React.FC = () => {
     const [detailRequest, setDetailRequest] = useState<PurchaseRequestDto | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [notificationTrigger, setNotificationTrigger] = useState(0);
+    const [approvalConfigs, setApprovalConfigs] = useState<ApprovalConfigDto[]>([]);
 
     const navItems = role === 'Reviewer' ? [
         { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
@@ -30,13 +33,18 @@ const PendingReviews: React.FC = () => {
         { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
         { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await reviewService.getPendingReviews();
+            const [data, configs] = await Promise.all([
+                reviewService.getPendingReviews(),
+                approvalConfigService.getAll(),
+            ]);
             setRequests(data);
+            setApprovalConfigs(configs);
         } catch (err) {
             console.error('Failed to fetch pending reviews:', err);
         } finally {
@@ -190,6 +198,7 @@ const PendingReviews: React.FC = () => {
                 onApprove={handleApprove}
                 onReject={handleReject}
                 onUpdateComment={handleUpdateComment}
+                approvalConfigs={approvalConfigs}
             />
         </DashboardLayout>
     );

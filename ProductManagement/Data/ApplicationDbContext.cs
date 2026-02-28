@@ -19,6 +19,8 @@ namespace ProductManagement.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseProductOrder> PurchaseProductOrders { get; set; }
+        public DbSet<ApprovalConfig> ApprovalConfigs { get; set; }
+        public DbSet<ApprovalLog> ApprovalLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -197,6 +199,51 @@ namespace ProductManagement.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            // Configure ApprovalConfig Id as GUID v4
+            modelBuilder.Entity<ApprovalConfig>()
+                .Property(ac => ac.Id)
+                .HasDefaultValueSql("NEWID()");
+
+            // Configure ApprovalConfig MinAmount and MaxAmount precision
+            modelBuilder.Entity<ApprovalConfig>()
+                .Property(ac => ac.MinAmount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ApprovalConfig>()
+                .Property(ac => ac.MaxAmount)
+                .HasPrecision(18, 2);
+
+            // Configure ApprovalConfig -> Role relationship
+            modelBuilder.Entity<ApprovalConfig>()
+                .HasOne(ac => ac.Role)
+                .WithMany()
+                .HasForeignKey(ac => ac.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure ApprovalLog Id as GUID v4
+            modelBuilder.Entity<ApprovalLog>()
+                .Property(al => al.Id)
+                .HasDefaultValueSql("NEWID()");
+
+            // Configure ApprovalLog -> PurchaseRequest relationship
+            modelBuilder.Entity<ApprovalLog>()
+                .HasOne(al => al.PurchaseRequest)
+                .WithMany()
+                .HasForeignKey(al => al.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure ApprovalLog -> User (Approver) relationship
+            modelBuilder.Entity<ApprovalLog>()
+                .HasOne(al => al.Approver)
+                .WithMany()
+                .HasForeignKey(al => al.ApproverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure ApprovalLog ApproverComment max length
+            modelBuilder.Entity<ApprovalLog>()
+                .Property(al => al.ApproverComment)
+                .HasMaxLength(3000);
 
             // Seed Roles (using GUID v4)
             var roles = new List<Role>

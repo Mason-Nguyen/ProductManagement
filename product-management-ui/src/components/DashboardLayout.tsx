@@ -16,7 +16,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, n
 
     const handleLogout = () => {
         authService.logout();
-        navigate('/login');
+        window.location.href = '/login';
     };
 
     const getInitials = (name: string) => {

@@ -33,7 +33,8 @@ const ProductsManagement: React.FC = () => {
                     { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
                     { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
                     { icon: '📦', label: 'Products Management', active: true },
-                    { icon: '🔐', label: 'Roles & Permissions' },
+                    { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
+                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
                 ];
             case 'Approver':
                 return [
@@ -43,6 +44,7 @@ const ProductsManagement: React.FC = () => {
                     { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
                     { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
                     { icon: '📦', label: 'Products Management', active: true },
+                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
                 ];
             case 'Reviewer':
                 return [

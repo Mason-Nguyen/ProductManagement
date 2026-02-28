@@ -11,7 +11,7 @@ const ProvidersManagement: React.FC = () => {
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
     const canEdit = userRole === 'Admin' || userRole === 'Reviewer';
-    
+
     const [providers, setProviders] = useState<ProviderDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -28,7 +28,8 @@ const ProvidersManagement: React.FC = () => {
                     { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
                     { icon: '🏭', label: 'Providers Management', active: true },
                     { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-                    { icon: '🔐', label: 'Roles & Permissions' },
+                    { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
+                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
                 ];
             case 'Approver':
                 return [
@@ -38,6 +39,7 @@ const ProvidersManagement: React.FC = () => {
                     { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
                     { icon: '🏢', label: 'Providers Management', active: true },
                     { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
+                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
                 ];
             case 'Reviewer':
                 return [

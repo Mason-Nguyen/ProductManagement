@@ -102,10 +102,31 @@ namespace ProductManagement.Services
 
             if (request == null)
                 throw new NotFoundException("Purchase request not found or not in pending status.");
+            // Price-based approval rule using ApprovalConfig
+            var approvalConfigs = await _context.ApprovalConfigs.ToListAsync();
 
-            // Price-based approval rule
-            if (request.TotalPrice >= 5000000m && userRole != "Approver")
-                throw new InvalidOperationException("Only Approver can approve requests with total price >= 5,000,000.");
+            if (approvalConfigs.Any())
+            {
+                // Get the current user's RoleId
+                var currentUser = await _context.Users.FindAsync(userId);
+                if (currentUser == null)
+                    throw new NotFoundException("Current user not found.");
+
+                // Check if there's a config matching the user's roleId AND the request's totalPrice is in range
+                var matchingConfig = approvalConfigs.FirstOrDefault(ac =>
+                    ac.RoleId == currentUser.RoleId &&
+                    request.TotalPrice >= ac.MinAmount &&
+                    request.TotalPrice <= ac.MaxAmount);
+
+                if (matchingConfig == null)
+                    throw new InvalidOperationException("You do not have permission to approve requests in this amount range.");
+            }
+            else
+            {
+                // Fallback: no configs in DB, use legacy 5M rule
+                if (request.TotalPrice >= 5000000m && userRole != "Approver")
+                    throw new InvalidOperationException("Only Approver can approve requests with total price >= 5,000,000.");
+            }
 
             request.Status = 2; // Approved
             request.ReviewerComment = reviewerComment;
@@ -113,6 +134,18 @@ namespace ProductManagement.Services
             request.ApproverId = userId;
             request.ModifiedDate = DateTime.UtcNow;
 
+            await _context.SaveChangesAsync();
+
+            // Create ApprovalLog
+            _context.ApprovalLogs.Add(new ApprovalLog
+            {
+                Id = Guid.NewGuid(),
+                RequestId = id,
+                ApproverId = userId,
+                Action = 2, // Approved
+                ApproverComment = reviewerComment,
+                LogTime = DateTime.UtcNow
+            });
             await _context.SaveChangesAsync();
 
             // Reload with includes
@@ -144,6 +177,18 @@ namespace ProductManagement.Services
             request.ReviewerId = userId;
             request.ModifiedDate = DateTime.UtcNow;
 
+            await _context.SaveChangesAsync();
+
+            // Create ApprovalLog
+            _context.ApprovalLogs.Add(new ApprovalLog
+            {
+                Id = Guid.NewGuid(),
+                RequestId = id,
+                ApproverId = userId,
+                Action = 4, // Rejected
+                ApproverComment = reviewerComment,
+                LogTime = DateTime.UtcNow
+            });
             await _context.SaveChangesAsync();
 
             // Reload with includes

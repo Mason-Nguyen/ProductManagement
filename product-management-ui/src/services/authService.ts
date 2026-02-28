@@ -16,17 +16,22 @@ export interface UserData {
     role: string;
 }
 
+
 export const authService = {
-    async login(email: string, password: string): Promise<LoginResponse> {
+    async login(email: string, password: string, rememberMe: boolean = true): Promise<LoginResponse> {
         const response = await axios.post<LoginResponse>(`${API_URL}/login`, {
             email,
             password,
         });
         const data = response.data;
 
-        // Store in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify({
+        // Store rememberMe flag in localStorage (always accessible)
+        localStorage.setItem('rememberMe', String(rememberMe));
+
+        // Store token and user in the appropriate storage
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem('token', data.token);
+        storage.setItem('user', JSON.stringify({
             username: data.username,
             email: data.email,
             role: data.role,
@@ -38,14 +43,17 @@ export const authService = {
     logout(): void {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('rememberMe');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
     },
 
     getToken(): string | null {
-        return localStorage.getItem('token');
+        return sessionStorage.getItem('token') || localStorage.getItem('token');
     },
 
     getUser(): UserData | null {
-        const user = localStorage.getItem('user');
+        const user = sessionStorage.getItem('user') || localStorage.getItem('user');
         if (!user) return null;
         try {
             return JSON.parse(user);

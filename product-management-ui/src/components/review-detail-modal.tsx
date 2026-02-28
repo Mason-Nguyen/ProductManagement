@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
+import type { ApprovalConfigDto } from '../services/approval-config-service';
 
 interface ReviewDetailModalProps {
     isOpen: boolean;
@@ -9,10 +10,11 @@ interface ReviewDetailModalProps {
     onApprove: (id: string, comment: string) => Promise<void>;
     onReject: (id: string, comment: string) => Promise<void>;
     onUpdateComment: (id: string, comment: string) => Promise<void>;
+    approvalConfigs: ApprovalConfigDto[];
 }
 
 const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
-    isOpen, onClose, request, userRole, onApprove, onReject, onUpdateComment
+    isOpen, onClose, request, userRole, onApprove, onReject, onUpdateComment, approvalConfigs
 }) => {
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -30,6 +32,15 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
     if (!isOpen || !request) return null;
 
     const canApprove = () => {
+        if (approvalConfigs.length > 0) {
+            // Config-based: find config matching user's role AND totalPrice in range
+            return approvalConfigs.some(ac =>
+                ac.roleName === userRole &&
+                request.totalPrice >= ac.minAmount &&
+                request.totalPrice <= ac.maxAmount
+            );
+        }
+        // Fallback: no configs in DB, use legacy 5M rule
         if (request.totalPrice < 5000000) {
             return true; // Both Reviewer and Approver can approve
         }

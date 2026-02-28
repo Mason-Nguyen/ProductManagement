@@ -17,6 +17,8 @@ import PendingReviews from './pages/pending-reviews';
 import ApprovedRequests from './pages/approved-requests';
 import RejectedRequests from './pages/rejected-requests';
 import PurchaseOrders from './pages/purchase-orders';
+import ApprovalConfigManagement from './pages/approval-config-management';
+import ApprovalLogPage from './pages/approval-log';
 
 function App() {
   return (
@@ -83,6 +85,16 @@ function App() {
         <Route path="/admin/products" element={
           <ProtectedRoute allowedRoles={['Admin']}>
             <ProductsManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/approval-configs" element={
+          <ProtectedRoute allowedRoles={['Admin']}>
+            <ApprovalConfigManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/approval-logs" element={
+          <ProtectedRoute allowedRoles={['Admin']}>
+            <ApprovalLogPage />
           </ProtectedRoute>
         } />
 
@@ -154,6 +166,11 @@ function App() {
         <Route path="/approver/products" element={
           <ProtectedRoute allowedRoles={['Approver']}>
             <ProductsManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/approver/approval-logs" element={
+          <ProtectedRoute allowedRoles={['Approver']}>
+            <ApprovalLogPage />
           </ProtectedRoute>
         } />
 

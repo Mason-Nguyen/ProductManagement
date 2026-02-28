@@ -29,6 +29,7 @@ const ApprovedRequests: React.FC = () => {
         { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
         { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {

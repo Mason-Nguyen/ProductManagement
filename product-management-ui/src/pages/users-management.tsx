@@ -24,7 +24,8 @@ const UsersManagement: React.FC = () => {
         { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
         { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-        { icon: '🔐', label: 'Roles & Permissions' },
+        { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
+        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {

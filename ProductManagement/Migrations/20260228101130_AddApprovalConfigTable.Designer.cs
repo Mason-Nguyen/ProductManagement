@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductManagement.Data;
 
@@ -11,9 +12,11 @@ using ProductManagement.Data;
 namespace ProductManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228101130_AddApprovalConfigTable")]
+    partial class AddApprovalConfigTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,38 +48,6 @@ namespace ProductManagement.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("ApprovalConfigs");
-                });
-
-            modelBuilder.Entity("ProductManagement.Models.ApprovalLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ApproverComment")
-                        .HasMaxLength(3000)
-                        .HasColumnType("nvarchar(3000)");
-
-                    b.Property<Guid>("ApproverId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("LogTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RequestId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApproverId");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("ApprovalLogs");
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Department", b =>
@@ -465,7 +436,7 @@ namespace ProductManagement.Migrations
                             Id = new Guid("a8b9c0d1-e2f3-4a4b-5c6d-7e8f9a0b1c2d"),
                             CreatedDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@productmanagement.com",
-                            Password = "$2a$11$zU63mp31qhvlCssV3l/jOuUBYn7BowlwgA0me4GMMqLMjkvJb6EE.",
+                            Password = "$2a$11$uJ9yHK73UFjIBMxYGPIiFe0I.Q2Z2hImubp/BDHwJPWmOdLCt3w8q",
                             Phone = "0123456789",
                             RoleId = new Guid("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"),
                             Status = true,
@@ -482,25 +453,6 @@ namespace ProductManagement.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("ProductManagement.Models.ApprovalLog", b =>
-                {
-                    b.HasOne("ProductManagement.Models.User", "Approver")
-                        .WithMany()
-                        .HasForeignKey("ApproverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProductManagement.Models.PurchaseRequest", "PurchaseRequest")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Approver");
-
-                    b.Navigation("PurchaseRequest");
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Product", b =>

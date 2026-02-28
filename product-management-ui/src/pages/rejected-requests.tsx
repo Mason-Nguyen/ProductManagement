@@ -29,6 +29,7 @@ const RejectedRequests: React.FC = () => {
         { icon: '❌', label: 'Rejected', active: true },
         { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {
