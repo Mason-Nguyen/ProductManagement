@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { ProductDto, CreateProductRequest, UpdateProductRequest } from '../services/product-service';
 import type { ProviderDto } from '../services/provider-service';
+import { useTranslation } from 'react-i18next';
 
 interface ProductModalProps {
     isOpen: boolean;
@@ -11,6 +12,7 @@ interface ProductModalProps {
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, providers, editProduct }) => {
+    const { t } = useTranslation();
     const [productCode, setProductCode] = useState('');
     const [productName, setProductName] = useState('');
     const [category, setCategory] = useState('');

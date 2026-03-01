@@ -208,6 +208,30 @@
     "urgentOrders": "Urgent",
     "totalValue": "Total Value"
   },
+  "dashboard": {
+    "adminTitle": "Admin Dashboard",
+    "welcomeBack": "Welcome back, {{username}}!",
+    "adminAccess": "You have full administrative access to manage the system.",
+    "approvedThisMonth": "Approved This Month",
+    "recentActivity": "Recent Activity",
+    "logout": "Logout",
+    "activity": {
+      "newUser": "New user registered",
+      "requestApproved": "Purchase request approved",
+      "productUpdated": "Product updated",
+      "roleUpdated": "Role permissions updated"
+    },
+    "time": {
+      "minAgo": "{{count}} min ago",
+      "hourAgo": "{{count}} hour ago"
+    },
+    "notification": {
+      "viewPending": "Click to view pending requests",
+      "noPending": "No pending requests",
+      "normalRequests": "Normal requests",
+      "urgentRequests": "Urgent requests"
+    }
+  },
   "page": {
     "productsManagement": "Products Management",
     "providersManagement": "Providers Management",

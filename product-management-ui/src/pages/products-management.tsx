@@ -154,9 +154,9 @@ const ProductsManagement: React.FC = () => {
     return (
         <DashboardLayout roleName={userRole} navItems={getNavItems()}>
             <div className="topbar">
-                <h2>Products Management</h2>
+                <h2>{t('page.productsManagement')}</h2>
                 <div className="topbar-right">
-                    <span>{products.length} total products</span>
+                    <span>{products.length} {t('page.products')}</span>
                 </div>
             </div>
 
@@ -170,7 +170,7 @@ const ProductsManagement: React.FC = () => {
                     >
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>📦</div>
                         <div className="stat-value">{products.length}</div>
-                        <div className="stat-label">Total Products</div>
+                        <div className="stat-label">{t('stat.totalProducts')}</div>
                     </div>
                     <div
                         className={`stat-card ${activeFilter === 1 ? 'active' : ''}`}
@@ -179,7 +179,7 @@ const ProductsManagement: React.FC = () => {
                     >
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>🟢</div>
                         <div className="stat-value">{products.filter(p => p.inStockStatus === 1).length}</div>
-                        <div className="stat-label">In Stock</div>
+                        <div className="stat-label">{t('stat.inStock')}</div>
                     </div>
                     <div
                         className={`stat-card ${activeFilter === 2 ? 'active' : ''}`}
@@ -188,7 +188,7 @@ const ProductsManagement: React.FC = () => {
                     >
                         <div className="stat-icon" style={{ background: 'rgba(251, 146, 60, 0.1)', color: '#fb923c' }}>🟡</div>
                         <div className="stat-value">{products.filter(p => p.inStockStatus === 2).length}</div>
-                        <div className="stat-label">Almost Out</div>
+                        <div className="stat-label">{t('stat.almostOut')}</div>
                     </div>
                     <div
                         className={`stat-card ${activeFilter === 0 ? 'active' : ''}`}
@@ -197,7 +197,7 @@ const ProductsManagement: React.FC = () => {
                     >
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔴</div>
                         <div className="stat-value">{products.filter(p => p.inStockStatus === 0).length}</div>
-                        <div className="stat-label">Out of Stock</div>
+                        <div className="stat-label">{t('stat.outOfStock')}</div>
                     </div>
                 </div>
 
@@ -208,41 +208,41 @@ const ProductsManagement: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by product code, category, or provider..."
+                                placeholder={t('page.searchByCode')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         {canEdit && (
                             <button className="btn-add" onClick={openCreateModal}>
-                                <span>➕</span> Add Product
+                                <span>➕</span> {t('button.addProduct')}
                             </button>
                         )}
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading products...</div>
+                        <div className="table-loading">{t('page.loadingProducts')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Product Code</th>
-                                        <th>Product Name</th>
-                                        <th>Category</th>
-                                        <th>Unit</th>
-                                        <th>Price</th>
-                                        <th>In Stock</th>
-                                        <th>Min Stock</th>
-                                        <th>Provider</th>
-                                        <th>Stock Status</th>
-                                        <th>Actions</th>
+                                        <th>{t('table.productCode')}</th>
+                                        <th>{t('table.productName')}</th>
+                                        <th>{t('table.category')}</th>
+                                        <th>{t('table.unit')}</th>
+                                        <th>{t('table.price')}</th>
+                                        <th>{t('table.inStock')}</th>
+                                        <th>{t('table.minStock')}</th>
+                                        <th>{t('table.provider')}</th>
+                                        <th>{t('table.stockStatus')}</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredProducts.length === 0 ? (
                                         <tr>
-                                            <td colSpan={10} className="table-empty">No products found</td>
+                                            <td colSpan={10} className="table-empty">{t('page.noProductsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredProducts.map((product) => (
@@ -295,18 +295,17 @@ const ProductsManagement: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
                     <div className="modal-content confirm-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Delete Product</h3>
+                            <h3>{t('modal.deleteProduct')}</h3>
                             <button className="modal-close" onClick={() => setDeleteConfirm(null)}>✕</button>
                         </div>
                         <div className="modal-body">
                             <p className="confirm-text">
-                                Are you sure you want to delete <strong>{deleteConfirm.productCode}</strong>?
+                                {t('modal.deleteProductConfirm')}
                             </p>
-                            <p className="confirm-hint">This product will be removed from the list but kept in the database.</p>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
-                            <button className="btn-danger" onClick={handleDelete}>Delete</button>
+                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>{t('common.cancel')}</button>
+                            <button className="btn-danger" onClick={handleDelete}>{t('common.delete')}</button>
                         </div>
                     </div>
                 </div>

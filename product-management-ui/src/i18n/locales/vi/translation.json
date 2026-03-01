@@ -208,6 +208,30 @@
     "urgentOrders": "Khẩn cấp",
     "totalValue": "Tổng giá trị"
   },
+  "dashboard": {
+    "adminTitle": "Bảng điều khiển quản trị",
+    "welcomeBack": "Chào mừng trở lại, {{username}}!",
+    "adminAccess": "Bạn có quyền quản trị đầy đủ để quản lý hệ thống.",
+    "approvedThisMonth": "Đã duyệt tháng này",
+    "recentActivity": "Hoạt động gần đây",
+    "logout": "Đăng xuất",
+    "activity": {
+      "newUser": "Người dùng mới đăng ký",
+      "requestApproved": "Yêu cầu mua hàng đã duyệt",
+      "productUpdated": "Sản phẩm đã cập nhật",
+      "roleUpdated": "Quyền vai trò đã cập nhật"
+    },
+    "time": {
+      "minAgo": "{{count}} phút trước",
+      "hourAgo": "{{count}} giờ trước"
+    },
+    "notification": {
+      "viewPending": "Nhấn để xem yêu cầu chờ xử lý",
+      "noPending": "Không có yêu cầu chờ xử lý",
+      "normalRequests": "Yêu cầu thường",
+      "urgentRequests": "Yêu cầu khẩn cấp"
+    }
+  },
   "page": {
     "productsManagement": "Quản lý sản phẩm",
     "providersManagement": "Quản lý nhà cung cấp",

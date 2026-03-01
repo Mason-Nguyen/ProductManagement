@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../services/authService';
 import { notificationService } from '../services/notification-service';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -14,6 +15,7 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, navItems, notificationRefreshTrigger }) => {
     const navigate = useNavigate();
     const user = authService.getUser();
+    const { t } = useTranslation();
 
     const handleLogout = async () => {
         await authService.logout();
@@ -73,18 +75,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, n
                             <div
                                 className={`notification-icon ${(notificationCount.normalCount > 0 || notificationCount.urgentCount > 0) ? 'has-notifications' : 'empty'}`}
                                 onClick={handleNotificationClick}
-                                title={(notificationCount.normalCount > 0 || notificationCount.urgentCount > 0) ? 'Click to view pending requests' : 'No pending requests'}
+                                title={(notificationCount.normalCount > 0 || notificationCount.urgentCount > 0) ? t('dashboard.notification.viewPending') : t('dashboard.notification.noPending')}
                             >
                                 <span className="bell-icon">🔔</span>
                                 {!loadingNotifications && (notificationCount.normalCount > 0 || notificationCount.urgentCount > 0) && (
                                     <div className="notification-badges">
                                         {notificationCount.normalCount > 0 && (
-                                            <span className="notification-badge normal" title="Normal requests">
+                                            <span className="notification-badge normal" title={t('dashboard.notification.normalRequests')}>
                                                 {notificationCount.normalCount}
                                             </span>
                                         )}
                                         {notificationCount.urgentCount > 0 && (
-                                            <span className="notification-badge urgent" title="Urgent requests">
+                                            <span className="notification-badge urgent" title={t('dashboard.notification.urgentRequests')}>
                                                 🔥 {notificationCount.urgentCount}
                                             </span>
                                         )}
@@ -122,7 +124,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, n
                     </div>
                     <button className="logout-btn" onClick={handleLogout}>
                         <span>🚪</span>
-                        <span>Logout</span>
+                        <span>{t('dashboard.logout')}</span>
                     </button>
                 </div>
             </aside>
