@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { notificationService } from '../services/notification-service';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
@@ -66,6 +67,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, n
                 <div className="sidebar-header">
                     <div className="app-name">ProductManagement</div>
                     <div className="header-actions">
+                        <LanguageSwitcher />
                         <span className="role-badge">{roleName}</span>
                         {showNotificationIcon && (
                             <div

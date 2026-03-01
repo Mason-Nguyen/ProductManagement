@@ -8,9 +8,11 @@ import type { ProviderDto } from '../services/provider-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { formatVND } from '../utils/formatters';
+import { useTranslation } from 'react-i18next';
 
 const ProductsManagement: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
     const canEdit = userRole === 'Requester'; // Only Requester can edit products
