@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import ProviderModal from '../components/provider-modal';
 import { providerService } from '../services/provider-service';
@@ -8,6 +9,7 @@ import { authService } from '../services/authService';
 
 const ProvidersManagement: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
     const canEdit = userRole === 'Admin' || userRole === 'Reviewer';
@@ -23,40 +25,40 @@ const ProvidersManagement: React.FC = () => {
         switch (userRole) {
             case 'Admin':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/admin') },
-                    { icon: '👥', label: 'Users Management', onClick: () => navigate('/admin/users') },
-                    { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
-                    { icon: '🏭', label: 'Providers Management', active: true },
-                    { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-                    { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
-                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
-                    { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/admin') },
+                    { icon: '👥', label: t('nav.usersManagement'), onClick: () => navigate('/admin/users') },
+                    { icon: '🏢', label: t('nav.departmentsManagement'), onClick: () => navigate('/admin/departments') },
+                    { icon: '🏭', label: t('nav.providersManagement'), active: true },
+                    { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/admin/products') },
+                    { icon: '⚙️', label: t('nav.approvalConfiguration'), onClick: () => navigate('/admin/approval-configs') },
+                    { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/admin/approval-logs') },
+                    { icon: '🔐', label: t('nav.loginTracking'), onClick: () => navigate('/admin/login-logs') },
                 ];
             case 'Approver':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-                    { icon: '📋', label: 'Pending Approvals', onClick: () => navigate('/approver/pending-reviews') },
-                    { icon: '✅', label: 'Approved', onClick: () => navigate('/approver/approved-requests') },
-                    { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
-                    { icon: '🏢', label: 'Providers Management', active: true },
-                    { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
-                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+                    { icon: '📋', label: t('nav.pendingApprovals'), onClick: () => navigate('/approver/pending-reviews') },
+                    { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/approver/approved-requests') },
+                    { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/approver/rejected-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), active: true },
+                    { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/approver/products') },
+                    { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/approver/approval-logs') },
                 ];
             case 'Reviewer':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
-                    { icon: '🔍', label: 'Pending Reviews', onClick: () => navigate('/reviewer/pending-reviews') },
-                    { icon: '✅', label: 'Approved', onClick: () => navigate('/reviewer/approved-requests') },
-                    { icon: '❌', label: 'Rejected', onClick: () => navigate('/reviewer/rejected-requests') },
-                    { icon: '🏢', label: 'Providers Management', active: true },
-                    { icon: '📦', label: 'Products Management', onClick: () => navigate('/reviewer/products') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
+                    { icon: '🔍', label: t('nav.pendingReviews'), onClick: () => navigate('/reviewer/pending-reviews') },
+                    { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/reviewer/approved-requests') },
+                    { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/reviewer/rejected-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), active: true },
+                    { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/reviewer/products') },
                 ];
             default:
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/requester') },
-                    { icon: '📋', label: 'My Requests', onClick: () => navigate('/requester/my-requests') },
-                    { icon: '🏢', label: 'Providers Management', active: true },
-                    { icon: '📦', label: 'Products Management', onClick: () => navigate('/requester/products') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/requester') },
+                    { icon: '📋', label: t('nav.myRequests'), onClick: () => navigate('/requester/my-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), active: true },
+                    { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/requester/products') },
                 ];
         }
     };
@@ -108,9 +110,9 @@ const ProvidersManagement: React.FC = () => {
     return (
         <DashboardLayout roleName={userRole} navItems={getNavItems()}>
             <div className="topbar">
-                <h2>Providers Management</h2>
+                <h2>{t('page.providersManagement')}</h2>
                 <div className="topbar-right">
-                    <span>{providers.length} total providers</span>
+                    <span>{providers.length} {t('page.totalProviders')}</span>
                 </div>
             </div>
 
@@ -118,19 +120,9 @@ const ProvidersManagement: React.FC = () => {
                 {/* Stats */}
                 <div className="stats-grid">
                     <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>🏢</div>
+                        <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>🏭</div>
                         <div className="stat-value">{providers.length}</div>
-                        <div className="stat-label">Total Providers</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>👤</div>
-                        <div className="stat-value">{providers.filter(p => p.contactPerson).length}</div>
-                        <div className="stat-label">With Contact Person</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(251, 146, 60, 0.1)', color: '#fb923c' }}>📞</div>
-                        <div className="stat-value">{providers.filter(p => p.phoneNumber).length}</div>
-                        <div className="stat-label">With Phone Number</div>
+                        <div className="stat-label">{t('stat.totalProviders')}</div>
                     </div>
                 </div>
 
@@ -141,37 +133,37 @@ const ProvidersManagement: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by name, tax ID, or contact..."
+                                placeholder={t('page.searchByNameTaxContact')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         {canEdit && (
                             <button className="btn-add" onClick={openCreateModal}>
-                                <span>➕</span> Add Provider
+                                <span>➕</span> {t('button.addProvider')}
                             </button>
                         )}
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading providers...</div>
+                        <div className="table-loading">{t('page.loadingProviders')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Provider Name</th>
+                                        <th>{t('table.providerName')}</th>
                                         <th>Tax ID</th>
-                                        <th>Contact Person</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>Actions</th>
+                                        <th>{t('table.contactPerson')}</th>
+                                        <th>{t('table.phone')}</th>
+                                        <th>{t('table.address')}</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredProviders.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="table-empty">No providers found</td>
+                                            <td colSpan={6} className="table-empty">{t('page.noProvidersFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredProviders.map((provider) => (
@@ -191,7 +183,7 @@ const ProvidersManagement: React.FC = () => {
                                                 <td>
                                                     {canEdit && (
                                                         <div className="action-btns">
-                                                            <button className="btn-edit" onClick={() => openEditModal(provider)} title="Edit">
+                                                            <button className="btn-edit" onClick={() => openEditModal(provider)} title={t('common.edit')}>
                                                                 ✏️
                                                             </button>
                                                         </div>

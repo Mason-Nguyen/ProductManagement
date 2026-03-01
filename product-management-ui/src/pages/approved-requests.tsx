@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import RequestDetailModal from '../components/request-detail-modal';
 import { reviewService } from '../services/review-service';
@@ -11,6 +12,7 @@ import { formatVND } from '../utils/formatters';
 
 const ApprovedRequests: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const role = currentUser?.role || '';
     const [requests, setRequests] = useState<PurchaseRequestDto[]>([]);
@@ -22,20 +24,20 @@ const ApprovedRequests: React.FC = () => {
     const [showSidebar, setShowSidebar] = useState(true);
 
     const navItems = role === 'Reviewer' ? [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
-        { icon: '🔍', label: 'Pending Reviews', onClick: () => navigate('/reviewer/pending-reviews') },
-        { icon: '✅', label: 'Approved', active: true },
-        { icon: '❌', label: 'Rejected', onClick: () => navigate('/reviewer/rejected-requests') },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/reviewer/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/reviewer/products') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
+        { icon: '🔍', label: t('nav.pendingReviews'), onClick: () => navigate('/reviewer/pending-reviews') },
+        { icon: '✅', label: t('nav.approved'), active: true },
+        { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/reviewer/rejected-requests') },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/reviewer/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/reviewer/products') },
     ] : [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-        { icon: '📋', label: 'Pending Approvals', onClick: () => navigate('/approver/pending-reviews') },
-        { icon: '✅', label: 'Approved', active: true },
-        { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
-        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+        { icon: '📋', label: t('nav.pendingApprovals'), onClick: () => navigate('/approver/pending-reviews') },
+        { icon: '✅', label: t('nav.approved'), active: true },
+        { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/approver/rejected-requests') },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/approver/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -72,8 +74,8 @@ const ApprovedRequests: React.FC = () => {
     );
 
     const getUrgentBadge = (urgent: number) => {
-        if (urgent === 1) return <span className="urgent-badge">🔥 Urgent</span>;
-        return <span className="normal-badge">Normal</span>;
+        if (urgent === 1) return <span className="urgent-badge">🔥 {t('status.urgent')}</span>;
+        return <span className="normal-badge">{t('status.normal')}</span>;
     };
 
     const formatDate = (dateStr: string) => {
@@ -95,14 +97,14 @@ const ApprovedRequests: React.FC = () => {
         });
     };
 
-    const pageTitle = role === 'Reviewer' ? 'Approved Requests' : 'Approved Requests';
+    const pageTitle = role === 'Reviewer' ? t('page.approvedRequests') : t('page.approvedRequests');
 
     return (
         <DashboardLayout roleName={role} navItems={navItems}>
             <div className="topbar">
                 <h2>{pageTitle}</h2>
                 <div className="topbar-right">
-                    <span>{requests.length} approved requests</span>
+                    <span>{requests.length} {t('page.approvedRequests')}</span>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
                         style={{
@@ -118,9 +120,9 @@ const ApprovedRequests: React.FC = () => {
                             gap: '0.35rem',
                             transition: 'all 0.2s',
                         }}
-                        title={showSidebar ? 'Hide Approval Log' : 'Show Approval Log'}
+                        title={showSidebar ? t('page.hideLog') : t('page.showLog')}
                     >
-                        📝 {showSidebar ? 'Hide Log' : 'Show Log'}
+                        📝 {showSidebar ? t('page.hideLog') : t('page.showLog')}
                     </button>
                 </div>
             </div>
@@ -133,17 +135,17 @@ const ApprovedRequests: React.FC = () => {
                         <div className="stat-card">
                             <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✅</div>
                             <div className="stat-value">{requests.length}</div>
-                            <div className="stat-label">Total Approved</div>
+                            <div className="stat-label">{t('stat.totalApproved')}</div>
                         </div>
                         <div className="stat-card">
                             <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔥</div>
                             <div className="stat-value">{requests.filter(r => r.urgent === 1).length}</div>
-                            <div className="stat-label">Urgent</div>
+                            <div className="stat-label">{t('stat.urgent')}</div>
                         </div>
                         <div className="stat-card">
                             <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>💰</div>
                             <div className="stat-value">${(requests.reduce((sum, r) => sum + r.totalPrice, 0) / 1000).toFixed(1)}K</div>
-                            <div className="stat-label">Total Value</div>
+                            <div className="stat-label">{t('stat.totalValue')}</div>
                         </div>
                     </div>
 
@@ -154,7 +156,7 @@ const ApprovedRequests: React.FC = () => {
                                 <span className="search-icon">🔍</span>
                                 <input
                                     type="text"
-                                    placeholder="Search by title..."
+                                    placeholder={t('page.searchByTitle')}
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
                                 />
@@ -162,27 +164,27 @@ const ApprovedRequests: React.FC = () => {
                         </div>
 
                         {loading ? (
-                            <div className="table-loading">Loading approved requests...</div>
+                            <div className="table-loading">{t('page.loadingRequests')}</div>
                         ) : (
                             <div className="table-wrapper">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
-                                            <th>Title</th>
-                                            <th>Created By</th>
-                                            <th>Reviewer</th>
-                                            <th>Approver</th>
-                                            <th>Priority</th>
-                                            <th>Products</th>
-                                            <th>Total Price</th>
+                                            <th>{t('table.title')}</th>
+                                            <th>{t('table.createdBy')}</th>
+                                            <th>{t('table.reviewer')}</th>
+                                            <th>{t('table.approver')}</th>
+                                            <th>{t('table.priority')}</th>
+                                            <th>{t('table.products')}</th>
+                                            <th>{t('table.totalPrice')}</th>
                                             <th>Approved Date</th>
-                                            <th>Actions</th>
+                                            <th>{t('common.actions')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filteredRequests.length === 0 ? (
                                             <tr>
-                                                <td colSpan={9} className="table-empty">No approved requests found</td>
+                                                <td colSpan={9} className="table-empty">{t('page.noRequestsFound')}</td>
                                             </tr>
                                         ) : (
                                             filteredRequests.map(request => (
@@ -204,7 +206,7 @@ const ApprovedRequests: React.FC = () => {
                                                     <td>{formatDate(request.modifiedDate)}</td>
                                                     <td>
                                                         <div className="action-btns">
-                                                            <button className="btn-detail" onClick={() => setDetailRequest(request)} title="View Details">👁️</button>
+                                                            <button className="btn-detail" onClick={() => setDetailRequest(request)} title={t('button.viewDetails')}>👁️</button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -222,13 +224,13 @@ const ApprovedRequests: React.FC = () => {
                     <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="content-card" style={{ position: 'sticky', top: '1rem' }}>
                             <h4 style={{ padding: '1rem 1.25rem 0.5rem', margin: 0, color: '#000000', fontSize: '1rem', borderBottom: '1px solid rgba(148, 163, 184, 0.1)', paddingBottom: '0.75rem' }}>
-                                📝 Approval Log
+                                📝 {t('page.recentLogs')}
                             </h4>
                             {logsLoading ? (
-                                <div className="table-loading" style={{ padding: '1.5rem', fontSize: '0.85rem' }}>Loading logs...</div>
+                                <div className="table-loading" style={{ padding: '1.5rem', fontSize: '0.85rem' }}>{t('page.loadingLogs')}</div>
                             ) : approvalLogs.length === 0 ? (
                                 <div style={{ padding: '1.5rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem' }}>
-                                    No approval logs found
+                                    {t('page.noLogsFound')}
                                 </div>
                             ) : (
                                 <ul style={{ listStyle: 'none', padding: '0.75rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -284,4 +286,3 @@ const ApprovedRequests: React.FC = () => {
 };
 
 export default ApprovedRequests;
-

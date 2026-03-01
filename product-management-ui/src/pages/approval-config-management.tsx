@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import ApprovalConfigModal from '../components/approval-config-modal';
 import { approvalConfigService } from '../services/approval-config-service';
@@ -11,6 +12,7 @@ const formatVND = (amount: number) => {
 
 const ApprovalConfigManagement: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [configs, setConfigs] = useState<ApprovalConfigDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -19,14 +21,14 @@ const ApprovalConfigManagement: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const navItems = [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/admin') },
-        { icon: '👥', label: 'Users Management', onClick: () => navigate('/admin/users') },
-        { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
-        { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-        { icon: '⚙️', label: 'Approval Configuration', active: true },
-        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
-        { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/admin') },
+        { icon: '👥', label: t('nav.usersManagement'), onClick: () => navigate('/admin/users') },
+        { icon: '🏢', label: t('nav.departmentsManagement'), onClick: () => navigate('/admin/departments') },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/admin/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/admin/products') },
+        { icon: '⚙️', label: t('nav.approvalConfiguration'), active: true },
+        { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/admin/approval-logs') },
+        { icon: '🔐', label: t('nav.loginTracking'), onClick: () => navigate('/admin/login-logs') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -84,9 +86,9 @@ const ApprovalConfigManagement: React.FC = () => {
     return (
         <DashboardLayout roleName="Admin" navItems={navItems}>
             <div className="topbar">
-                <h2>Approval Configuration</h2>
+                <h2>{t('page.approvalConfiguration')}</h2>
                 <div className="topbar-right">
-                    <span>{configs.length} total configurations</span>
+                    <span>{configs.length} {t('page.totalConfigurations')}</span>
                 </div>
             </div>
 
@@ -96,7 +98,7 @@ const ApprovalConfigManagement: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>⚙️</div>
                         <div className="stat-value">{configs.length}</div>
-                        <div className="stat-label">Total Configs</div>
+                        <div className="stat-label">{t('stat.totalConfigs')}</div>
                     </div>
                 </div>
 
@@ -107,7 +109,7 @@ const ApprovalConfigManagement: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by role name..."
+                                placeholder={t('page.searchByRoleName')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -118,22 +120,22 @@ const ApprovalConfigManagement: React.FC = () => {
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading approval configurations...</div>
+                        <div className="table-loading">{t('page.loadingConfigs')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Role</th>
+                                        <th>{t('table.role')}</th>
                                         <th>Min Amount</th>
                                         <th>Max Amount</th>
-                                        <th>Actions</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredConfigs.length === 0 ? (
                                         <tr>
-                                            <td colSpan={4} className="table-empty">No approval configurations found</td>
+                                            <td colSpan={4} className="table-empty">{t('page.noConfigsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredConfigs.map((config) => (
@@ -150,10 +152,10 @@ const ApprovalConfigManagement: React.FC = () => {
                                                 <td className="td-price">{formatVND(config.maxAmount)}</td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <button className="btn-edit" onClick={() => openEditModal(config)} title="Edit">
+                                                        <button className="btn-edit" onClick={() => openEditModal(config)} title={t('common.edit')}>
                                                             ✏️
                                                         </button>
-                                                        <button className="btn-delete" onClick={() => setDeleteConfirm(config)} title="Delete">
+                                                        <button className="btn-delete" onClick={() => setDeleteConfirm(config)} title={t('common.delete')}>
                                                             🗑️
                                                         </button>
                                                     </div>
@@ -191,8 +193,8 @@ const ApprovalConfigManagement: React.FC = () => {
                             <p className="confirm-hint">This action cannot be undone.</p>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
-                            <button className="btn-danger" onClick={handleDelete}>Delete</button>
+                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>{t('common.cancel')}</button>
+                            <button className="btn-danger" onClick={handleDelete}>{t('common.delete')}</button>
                         </div>
                     </div>
                 </div>

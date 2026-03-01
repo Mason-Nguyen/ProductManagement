@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { DepartmentDto, CreateDepartmentRequest, UpdateDepartmentRequest } from '../services/department-service';
+import { useTranslation } from 'react-i18next';
 
 interface DepartmentModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface DepartmentModalProps {
 }
 
 const DepartmentModal: React.FC<DepartmentModalProps> = ({ isOpen, onClose, onSave, editDepartment }) => {
+    const { t } = useTranslation();
     const [name, setName] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -35,9 +37,9 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({ isOpen, onClose, onSa
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Operation failed.');
+                setError(axiosErr.response?.data?.message || t('validation.operationFailed'));
             } else {
-                setError('An error occurred.');
+                setError(t('validation.errorOccurred'));
             }
         } finally {
             setLoading(false);
@@ -50,7 +52,7 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({ isOpen, onClose, onSa
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>{isEdit ? 'Edit Department' : 'Add New Department'}</h3>
+                    <h3>{isEdit ? t('modal.editDepartment') : t('modal.addDepartment')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -63,12 +65,12 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({ isOpen, onClose, onSa
                 <form onSubmit={handleSubmit}>
                     <div className="modal-body">
                         <div className="modal-form-group">
-                            <label>Department Name</label>
+                            <label>{t('form.departmentName')}</label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                placeholder="Enter department name"
+                                placeholder={t('form.enterDepartmentName')}
                                 maxLength={50}
                                 required
                             />
@@ -76,9 +78,9 @@ const DepartmentModal: React.FC<DepartmentModalProps> = ({ isOpen, onClose, onSa
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                         <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? 'Saving...' : isEdit ? 'Update Department' : 'Create Department'}
+                            {loading ? t('button.saving') : isEdit ? t('button.updateDepartment') : t('button.createDepartment')}
                         </button>
                     </div>
                 </form>

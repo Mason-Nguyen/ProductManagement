@@ -4,6 +4,7 @@ import { purchaseOrderService } from '../services/purchase-order-service';
 import { purchaseProductOrderService } from '../services/purchase-product-order-service';
 import type { PurchaseProductOrderDto } from '../services/purchase-product-order-service';
 import { formatVND } from '../utils/formatters';
+import { useTranslation } from 'react-i18next';
 
 interface ImportProductsModalProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface ImportProductsModalProps {
 }
 
 const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClose, order, onImportSuccess }) => {
+    const { t } = useTranslation();
     const [products, setProducts] = useState<PurchaseProductOrderDto[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -59,9 +61,9 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
     const validate = (): string | null => {
         for (const p of products) {
             const importQty = quantities[p.id] || 0;
-            if (importQty < 0) return `Quantity for ${p.productCode} cannot be negative.`;
+            if (importQty < 0) return t('modal.quantityCannotBeNegative', { code: p.productCode });
             const max = getMaxImport(p);
-            if (importQty > max) return `Quantity for ${p.productCode} exceeds max allowed (${max}).`;
+            if (importQty > max) return t('modal.quantityExceedsMax', { code: p.productCode, max });
         }
         return null;
     };
@@ -81,7 +83,7 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
             }));
 
         if (items.length === 0) {
-            setError('Please enter at least one quantity to import.');
+            setError(t('modal.enterAtLeastOneQuantity'));
             return;
         }
 
@@ -92,16 +94,16 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
             const updated = await purchaseOrderService.importProducts(order.id, items);
             const allDone = updated.status === 2;
             setSuccessMsg(allDone
-                ? '✅ All products imported! Order marked as Done.'
-                : '✅ Import successful! Order remains in Ordering status for remaining items.'
+                ? t('modal.allProductsImported')
+                : t('modal.importSuccessful')
             );
             onImportSuccess();
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to import products.');
+                setError(axiosErr.response?.data?.message || t('modal.failedToImport'));
             } else {
-                setError('An error occurred during import.');
+                setError(t('modal.errorDuringImport'));
             }
         } finally {
             setSubmitting(false);
@@ -112,7 +114,7 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content modal-xxlarge" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>📥 Import Products — {order.title}</h3>
+                    <h3>📥 {t('modal.importProducts')} — {order.title}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -130,22 +132,22 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
 
                 <div className="modal-body">
                     {loadingProducts ? (
-                        <div className="table-loading">Loading products...</div>
+                        <div className="table-loading">{t('modal.loadingProducts')}</div>
                     ) : (
                         <div className="selected-products-table">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Product Code</th>
-                                        <th>Product Name</th>
-                                        <th>Unit</th>
-                                        <th>Price</th>
-                                        <th>Min Stock</th>
-                                        <th>In Stock</th>
-                                        <th>Qty Requested</th>
-                                        <th>Already Imported</th>
-                                        <th>Remaining</th>
-                                        <th>Import Qty</th>
+                                        <th>{t('table.productCode')}</th>
+                                        <th>{t('table.productName')}</th>
+                                        <th>{t('table.unit')}</th>
+                                        <th>{t('table.price')}</th>
+                                        <th>{t('table.minStock')}</th>
+                                        <th>{t('table.inStock')}</th>
+                                        <th>{t('modal.qtyRequested')}</th>
+                                        <th>{t('modal.alreadyImported')}</th>
+                                        <th>{t('modal.remaining')}</th>
+                                        <th>{t('modal.importQty')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -180,7 +182,7 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
                                                             style={isOver ? { borderColor: '#ef4444' } : {}}
                                                         />
                                                     ) : (
-                                                        <span className="request-status-badge status-approved">✅ Done</span>
+                                                        <span className="request-status-badge status-approved">✅ {t('status.done')}</span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -192,19 +194,19 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
                     )}
 
                     <div className="total-price-row">
-                        <span>Projected Total Price:</span>
+                        <span>{t('modal.projectedTotalPrice')}</span>
                         <span className="total-price-value">{formatVND(calculatedTotalPrice)}</span>
                     </div>
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn-cancel" onClick={onClose}>Cancel</button>
+                    <button className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                     <button
                         className="btn-save"
                         onClick={handleSubmit}
                         disabled={submitting || !hasAnyQuantity || !!successMsg}
                     >
-                        {submitting ? 'Importing...' : '📥 OK — Import'}
+                        {submitting ? t('modal.importing') : `📥 ${t('modal.okImport')}`}
                     </button>
                 </div>
             </div>

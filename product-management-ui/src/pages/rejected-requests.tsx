@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import RequestDetailModal from '../components/request-detail-modal';
 import { reviewService } from '../services/review-service';
@@ -9,6 +10,7 @@ import { formatVND } from '../utils/formatters';
 
 const RejectedRequests: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const role = currentUser?.role || '';
     const [requests, setRequests] = useState<PurchaseRequestDto[]>([]);
@@ -17,20 +19,20 @@ const RejectedRequests: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const navItems = role === 'Reviewer' ? [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
-        { icon: '🔍', label: 'Pending Reviews', onClick: () => navigate('/reviewer/pending-reviews') },
-        { icon: '✅', label: 'Approved', onClick: () => navigate('/reviewer/approved-requests') },
-        { icon: '❌', label: 'Rejected', active: true },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/reviewer/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/reviewer/products') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
+        { icon: '🔍', label: t('nav.pendingReviews'), onClick: () => navigate('/reviewer/pending-reviews') },
+        { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/reviewer/approved-requests') },
+        { icon: '❌', label: t('nav.rejected'), active: true },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/reviewer/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/reviewer/products') },
     ] : [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-        { icon: '📋', label: 'Pending Approvals', onClick: () => navigate('/approver/pending-reviews') },
-        { icon: '✅', label: 'Approved', onClick: () => navigate('/approver/approved-requests') },
-        { icon: '❌', label: 'Rejected', active: true },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
-        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+        { icon: '📋', label: t('nav.pendingApprovals'), onClick: () => navigate('/approver/pending-reviews') },
+        { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/approver/approved-requests') },
+        { icon: '❌', label: t('nav.rejected'), active: true },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/approver/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -54,8 +56,8 @@ const RejectedRequests: React.FC = () => {
     );
 
     const getUrgentBadge = (urgent: number) => {
-        if (urgent === 1) return <span className="urgent-badge">🔥 Urgent</span>;
-        return <span className="normal-badge">Normal</span>;
+        if (urgent === 1) return <span className="urgent-badge">🔥 {t('status.urgent')}</span>;
+        return <span className="normal-badge">{t('status.normal')}</span>;
     };
 
     const formatDate = (dateStr: string) => {
@@ -66,14 +68,14 @@ const RejectedRequests: React.FC = () => {
         });
     };
 
-    const pageTitle = role === 'Reviewer' ? 'Rejected Requests' : 'Rejected Requests';
+    const pageTitle = t('page.rejectedRequests');
 
     return (
         <DashboardLayout roleName={role} navItems={navItems}>
             <div className="topbar">
                 <h2>{pageTitle}</h2>
                 <div className="topbar-right">
-                    <span>{requests.length} rejected requests</span>
+                    <span>{requests.length} {t('page.rejectedRequests')}</span>
                 </div>
             </div>
 
@@ -83,17 +85,17 @@ const RejectedRequests: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>❌</div>
                         <div className="stat-value">{requests.length}</div>
-                        <div className="stat-label">Total Rejected</div>
+                        <div className="stat-label">{t('stat.totalRejected')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔥</div>
                         <div className="stat-value">{requests.filter(r => r.urgent === 1).length}</div>
-                        <div className="stat-label">Urgent</div>
+                        <div className="stat-label">{t('stat.urgent')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>💰</div>
                         <div className="stat-value">${(requests.reduce((sum, r) => sum + r.totalPrice, 0) / 1000).toFixed(1)}K</div>
-                        <div className="stat-label">Total Value</div>
+                        <div className="stat-label">{t('stat.totalValue')}</div>
                     </div>
                 </div>
 
@@ -104,7 +106,7 @@ const RejectedRequests: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by title..."
+                                placeholder={t('page.searchByTitle')}
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
@@ -112,26 +114,26 @@ const RejectedRequests: React.FC = () => {
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading rejected requests...</div>
+                        <div className="table-loading">{t('page.loadingRequests')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Created By</th>
-                                        <th>Reviewer</th>
-                                        <th>Priority</th>
-                                        <th>Products</th>
-                                        <th>Total Price</th>
+                                        <th>{t('table.title')}</th>
+                                        <th>{t('table.createdBy')}</th>
+                                        <th>{t('table.reviewer')}</th>
+                                        <th>{t('table.priority')}</th>
+                                        <th>{t('table.products')}</th>
+                                        <th>{t('table.totalPrice')}</th>
                                         <th>Rejected Date</th>
-                                        <th>Actions</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredRequests.length === 0 ? (
                                         <tr>
-                                            <td colSpan={8} className="table-empty">No rejected requests found</td>
+                                            <td colSpan={8} className="table-empty">{t('page.noRequestsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredRequests.map(request => (
@@ -152,7 +154,7 @@ const RejectedRequests: React.FC = () => {
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title="View Details">👁️</button>
+                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title={t('button.viewDetails')}>👁️</button>
                                                     </div>
                                                 </td>
                                             </tr>

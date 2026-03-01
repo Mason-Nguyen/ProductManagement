@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import { approvalLogService } from '../services/approval-log-service';
 import type { ApprovalLogDto } from '../services/approval-log-service';
@@ -7,6 +8,7 @@ import { authService } from '../services/authService';
 
 const ApprovalLogPage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
     const [logs, setLogs] = useState<ApprovalLogDto[]>([]);
@@ -15,25 +17,25 @@ const ApprovalLogPage: React.FC = () => {
     const getNavItems = () => {
         if (userRole === 'Admin') {
             return [
-                { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/admin') },
-                { icon: '👥', label: 'Users Management', onClick: () => navigate('/admin/users') },
-                { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
-                { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
-                { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-                { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
-                { icon: '📝', label: 'Approval Log', active: true },
-                { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
+                { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/admin') },
+                { icon: '👥', label: t('nav.usersManagement'), onClick: () => navigate('/admin/users') },
+                { icon: '🏢', label: t('nav.departmentsManagement'), onClick: () => navigate('/admin/departments') },
+                { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/admin/providers') },
+                { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/admin/products') },
+                { icon: '⚙️', label: t('nav.approvalConfiguration'), onClick: () => navigate('/admin/approval-configs') },
+                { icon: '📝', label: t('nav.approvalLog'), active: true },
+                { icon: '🔐', label: t('nav.loginTracking'), onClick: () => navigate('/admin/login-logs') },
             ];
         }
         // Approver
         return [
-            { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-            { icon: '📋', label: 'Pending Approvals', onClick: () => navigate('/approver/pending-reviews') },
-            { icon: '✅', label: 'Approved', onClick: () => navigate('/approver/approved-requests') },
-            { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
-            { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
-            { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
-            { icon: '📝', label: 'Approval Log', active: true },
+            { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+            { icon: '📋', label: t('nav.pendingApprovals'), onClick: () => navigate('/approver/pending-reviews') },
+            { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/approver/approved-requests') },
+            { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/approver/rejected-requests') },
+            { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/approver/providers') },
+            { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/approver/products') },
+            { icon: '📝', label: t('nav.approvalLog'), active: true },
         ];
     };
 
@@ -68,9 +70,9 @@ const ApprovalLogPage: React.FC = () => {
     return (
         <DashboardLayout roleName={userRole} navItems={getNavItems()}>
             <div className="topbar">
-                <h2>Approval Log</h2>
+                <h2>{t('page.approvalLog')}</h2>
                 <div className="topbar-right">
-                    <span>Latest {logs.length} logs</span>
+                    <span>{t('page.latestLogs').replace('{{count}}', logs.length.toString())}</span>
                 </div>
             </div>
 
@@ -80,27 +82,27 @@ const ApprovalLogPage: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>📝</div>
                         <div className="stat-value">{logs.length}</div>
-                        <div className="stat-label">Recent Logs</div>
+                        <div className="stat-label">{t('stat.recentLogs')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✅</div>
                         <div className="stat-value">{logs.filter(l => l.action === 2).length}</div>
-                        <div className="stat-label">Approved</div>
+                        <div className="stat-label">{t('stat.approved')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>❌</div>
                         <div className="stat-value">{logs.filter(l => l.action === 4).length}</div>
-                        <div className="stat-label">Rejected</div>
+                        <div className="stat-label">{t('stat.rejected')}</div>
                     </div>
                 </div>
 
                 {/* Text List */}
                 <div className="content-card">
                     {loading ? (
-                        <div className="table-loading">Loading approval logs...</div>
+                        <div className="table-loading">{t('page.loadingLogs')}</div>
                     ) : logs.length === 0 ? (
                         <div className="table-empty" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-                            No approval logs found
+                            {t('page.noLogsFound')}
                         </div>
                     ) : (
                         <ul style={{ listStyle: 'none', padding: '1rem 1.5rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

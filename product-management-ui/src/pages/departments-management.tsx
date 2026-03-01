@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import DepartmentModal from '../components/department-modal';
 import { departmentService } from '../services/department-service';
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DepartmentsManagement: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [departments, setDepartments] = useState<DepartmentDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -15,14 +17,14 @@ const DepartmentsManagement: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const navItems = [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/admin') },
-        { icon: '👥', label: 'Users Management', onClick: () => navigate('/admin/users') },
-        { icon: '🏢', label: 'Departments Management', active: true },
-        { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
-        { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
-        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
-        { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/admin') },
+        { icon: '👥', label: t('nav.usersManagement'), onClick: () => navigate('/admin/users') },
+        { icon: '🏢', label: t('nav.departmentsManagement'), active: true },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/admin/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/admin/products') },
+        { icon: '⚙️', label: t('nav.approvalConfiguration'), onClick: () => navigate('/admin/approval-configs') },
+        { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/admin/approval-logs') },
+        { icon: '🔐', label: t('nav.loginTracking'), onClick: () => navigate('/admin/login-logs') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -80,9 +82,9 @@ const DepartmentsManagement: React.FC = () => {
     return (
         <DashboardLayout roleName="Admin" navItems={navItems}>
             <div className="topbar">
-                <h2>Departments Management</h2>
+                <h2>{t('page.departmentsManagement')}</h2>
                 <div className="topbar-right">
-                    <span>{departments.length} total departments</span>
+                    <span>{departments.length} {t('page.totalDepartments')}</span>
                 </div>
             </div>
 
@@ -92,7 +94,7 @@ const DepartmentsManagement: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>🏢</div>
                         <div className="stat-value">{departments.length}</div>
-                        <div className="stat-label">Total Departments</div>
+                        <div className="stat-label">{t('stat.totalDepartments')}</div>
                     </div>
                 </div>
 
@@ -103,31 +105,31 @@ const DepartmentsManagement: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by department name..."
+                                placeholder={t('page.searchByDepartmentName')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <button className="btn-add" onClick={openCreateModal}>
-                            <span>➕</span> Add Department
+                            <span>➕</span> {t('button.addDepartment')}
                         </button>
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading departments...</div>
+                        <div className="table-loading">{t('page.loadingDepartments')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Department Name</th>
-                                        <th>Actions</th>
+                                        <th>{t('table.departmentName')}</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredDepartments.length === 0 ? (
                                         <tr>
-                                            <td colSpan={2} className="table-empty">No departments found</td>
+                                            <td colSpan={2} className="table-empty">{t('page.noDepartmentsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredDepartments.map((department) => (
@@ -142,10 +144,10 @@ const DepartmentsManagement: React.FC = () => {
                                                 </td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <button className="btn-edit" onClick={() => openEditModal(department)} title="Edit">
+                                                        <button className="btn-edit" onClick={() => openEditModal(department)} title={t('common.edit')}>
                                                             ✏️
                                                         </button>
-                                                        <button className="btn-delete" onClick={() => setDeleteConfirm(department)} title="Delete">
+                                                        <button className="btn-delete" onClick={() => setDeleteConfirm(department)} title={t('common.delete')}>
                                                             🗑️
                                                         </button>
                                                     </div>
@@ -173,18 +175,18 @@ const DepartmentsManagement: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
                     <div className="modal-content confirm-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Delete Department</h3>
+                            <h3>{t('modal.deleteDepartment')}</h3>
                             <button className="modal-close" onClick={() => setDeleteConfirm(null)}>✕</button>
                         </div>
                         <div className="modal-body">
                             <p className="confirm-text">
-                                Are you sure you want to delete <strong>{deleteConfirm.name}</strong>?
+                                {t('modal.deleteDepartmentConfirm').replace('{{name}}', deleteConfirm.name)}
                             </p>
                             <p className="confirm-hint">This action cannot be undone.</p>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
-                            <button className="btn-danger" onClick={handleDelete}>Delete</button>
+                            <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>{t('common.cancel')}</button>
+                            <button className="btn-danger" onClick={handleDelete}>{t('common.delete')}</button>
                         </div>
                     </div>
                 </div>

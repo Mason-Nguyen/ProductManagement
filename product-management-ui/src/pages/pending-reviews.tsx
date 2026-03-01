@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import ReviewDetailModal from '../components/review-detail-modal';
 import { reviewService } from '../services/review-service';
@@ -11,6 +12,7 @@ import { formatVND } from '../utils/formatters';
 
 const PendingReviews: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const role = currentUser?.role || '';
     const [requests, setRequests] = useState<PurchaseRequestDto[]>([]);
@@ -21,20 +23,20 @@ const PendingReviews: React.FC = () => {
     const [approvalConfigs, setApprovalConfigs] = useState<ApprovalConfigDto[]>([]);
 
     const navItems = role === 'Reviewer' ? [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
-        { icon: '🔍', label: 'Pending Reviews', active: true },
-        { icon: '✅', label: 'Approved', onClick: () => navigate('/reviewer/approved-requests') },
-        { icon: '❌', label: 'Rejected', onClick: () => navigate('/reviewer/rejected-requests') },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/reviewer/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/reviewer/products') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
+        { icon: '🔍', label: t('nav.pendingReviews'), active: true },
+        { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/reviewer/approved-requests') },
+        { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/reviewer/rejected-requests') },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/reviewer/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/reviewer/products') },
     ] : [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-        { icon: '📋', label: 'Pending Approvals', active: true },
-        { icon: '✅', label: 'Approved', onClick: () => navigate('/approver/approved-requests') },
-        { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/approver/products') },
-        { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+        { icon: '📋', label: t('nav.pendingApprovals'), active: true },
+        { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/approver/approved-requests') },
+        { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/approver/rejected-requests') },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/approver/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/approver/products') },
+        { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/approver/approval-logs') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -79,8 +81,8 @@ const PendingReviews: React.FC = () => {
     );
 
     const getUrgentBadge = (urgent: number) => {
-        if (urgent === 1) return <span className="urgent-badge">🔥 Urgent</span>;
-        return <span className="normal-badge">Normal</span>;
+        if (urgent === 1) return <span className="urgent-badge">🔥 {t('status.urgent')}</span>;
+        return <span className="normal-badge">{t('status.normal')}</span>;
     };
 
     const formatDate = (dateStr: string) => {
@@ -91,14 +93,14 @@ const PendingReviews: React.FC = () => {
         });
     };
 
-    const pageTitle = role === 'Reviewer' ? 'Pending Reviews' : 'Pending Approvals';
+    const pageTitle = role === 'Reviewer' ? t('page.pendingReviews') : t('page.pendingApprovals');
 
     return (
         <DashboardLayout roleName={role} navItems={navItems} notificationRefreshTrigger={notificationTrigger}>
             <div className="topbar">
                 <h2>{pageTitle}</h2>
                 <div className="topbar-right">
-                    <span>{requests.length} pending requests</span>
+                    <span>{requests.length} {t('page.pendingRequests')}</span>
                 </div>
             </div>
 
@@ -108,17 +110,17 @@ const PendingReviews: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(251, 146, 60, 0.1)', color: '#fb923c' }}>📋</div>
                         <div className="stat-value">{requests.length}</div>
-                        <div className="stat-label">Total Pending</div>
+                        <div className="stat-label">{t('stat.totalPending')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔥</div>
                         <div className="stat-value">{requests.filter(r => r.urgent === 1).length}</div>
-                        <div className="stat-label">Urgent</div>
+                        <div className="stat-label">{t('stat.urgent')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>📝</div>
                         <div className="stat-value">{requests.filter(r => r.urgent === 0).length}</div>
-                        <div className="stat-label">Normal</div>
+                        <div className="stat-label">{t('stat.normal')}</div>
                     </div>
                 </div>
 
@@ -129,7 +131,7 @@ const PendingReviews: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by title..."
+                                placeholder={t('page.searchByTitle')}
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
@@ -137,26 +139,26 @@ const PendingReviews: React.FC = () => {
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading pending reviews...</div>
+                        <div className="table-loading">{t('page.loadingRequests')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Created By</th>
-                                        <th>Priority</th>
-                                        <th>Products</th>
-                                        <th>Total Price</th>
-                                        <th>Created</th>
-                                        <th>Modified</th>
-                                        <th>Actions</th>
+                                        <th>{t('table.title')}</th>
+                                        <th>{t('table.createdBy')}</th>
+                                        <th>{t('table.priority')}</th>
+                                        <th>{t('table.products')}</th>
+                                        <th>{t('table.totalPrice')}</th>
+                                        <th>{t('table.createdDate')}</th>
+                                        <th>{t('table.modifiedDate')}</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredRequests.length === 0 ? (
                                         <tr>
-                                            <td colSpan={8} className="table-empty">No pending requests found</td>
+                                            <td colSpan={8} className="table-empty">{t('page.noRequestsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredRequests.map(request => (
@@ -177,7 +179,7 @@ const PendingReviews: React.FC = () => {
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title="View Details">👁️</button>
+                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title={t('button.viewDetails')}>👁️</button>
                                                     </div>
                                                 </td>
                                             </tr>

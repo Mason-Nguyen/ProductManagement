@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { ApprovalConfigDto, CreateApprovalConfigRequest, UpdateApprovalConfigRequest } from '../services/approval-config-service';
 import type { RoleDto } from '../services/user-service';
 import { userService } from '../services/user-service';
+import { useTranslation } from 'react-i18next';
 
 interface ApprovalConfigModalProps {
     isOpen: boolean;
@@ -11,6 +12,7 @@ interface ApprovalConfigModalProps {
 }
 
 const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClose, onSave, editConfig }) => {
+    const { t } = useTranslation();
     const [roleId, setRoleId] = useState('');
     const [minAmount, setMinAmount] = useState('');
     const [maxAmount, setMaxAmount] = useState('');
@@ -56,17 +58,17 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
         const max = parseFloat(maxAmount);
 
         if (isNaN(min) || isNaN(max)) {
-            setValidationError('Please enter valid amounts.');
+            setValidationError(t('modal.validAmounts'));
             return false;
         }
 
         if (min < 0 || max < 0) {
-            setValidationError('Amounts cannot be negative.');
+            setValidationError(t('modal.amountsNonNegative'));
             return false;
         }
 
         if (min > max) {
-            setValidationError('Min Amount must be less than or equal to Max Amount.');
+            setValidationError(t('modal.minLessThanMax'));
             return false;
         }
 
@@ -92,9 +94,9 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Operation failed.');
+                setError(axiosErr.response?.data?.message || t('validation.operationFailed'));
             } else {
-                setError('An error occurred.');
+                setError(t('validation.errorOccurred'));
             }
         } finally {
             setLoading(false);
@@ -107,7 +109,7 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>{isEdit ? 'Edit Approval Config' : 'Add Approval Config'}</h3>
+                    <h3>{isEdit ? t('modal.editApprovalConfig') : t('modal.addApprovalConfig')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -126,13 +128,13 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                 <form onSubmit={handleSubmit}>
                     <div className="modal-body">
                         <div className="modal-form-group">
-                            <label>Role</label>
+                            <label>{t('form.role')}</label>
                             <select
                                 value={roleId}
                                 onChange={(e) => setRoleId(e.target.value)}
                                 required
                             >
-                                <option value="">Select a role...</option>
+                                <option value="">{t('modal.selectRole')}</option>
                                 {roles.map((role) => (
                                     <option key={role.id} value={role.id}>
                                         {role.roleName}
@@ -142,7 +144,7 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                         </div>
 
                         <div className="modal-form-group">
-                            <label>Min Amount (VND)</label>
+                            <label>{t('modal.minAmount')}</label>
                             <input
                                 type="number"
                                 value={minAmount}
@@ -150,7 +152,7 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                                     setMinAmount(e.target.value);
                                     setValidationError('');
                                 }}
-                                placeholder="Enter minimum amount"
+                                placeholder={t('modal.enterMinAmount')}
                                 min="0"
                                 step="0.01"
                                 required
@@ -158,7 +160,7 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                         </div>
 
                         <div className="modal-form-group">
-                            <label>Max Amount (VND)</label>
+                            <label>{t('modal.maxAmount')}</label>
                             <input
                                 type="number"
                                 value={maxAmount}
@@ -166,7 +168,7 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                                     setMaxAmount(e.target.value);
                                     setValidationError('');
                                 }}
-                                placeholder="Enter maximum amount"
+                                placeholder={t('modal.enterMaxAmount')}
                                 min="0"
                                 step="0.01"
                                 required
@@ -175,9 +177,9 @@ const ApprovalConfigModal: React.FC<ApprovalConfigModalProps> = ({ isOpen, onClo
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                         <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? 'Saving...' : isEdit ? 'Update Config' : 'Create Config'}
+                            {loading ? t('button.saving') : isEdit ? t('modal.updateConfig') : t('modal.createConfig')}
                         </button>
                     </div>
                 </form>

@@ -58,15 +58,15 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
         const parsedMinInStock = parseInt(minInStock, 10);
 
         if (isNaN(parsedPrice) || parsedPrice < 0) {
-            setError('Price must be a valid positive number.');
+            setError(t('validation.priceInvalid'));
             return;
         }
         if (isNaN(parsedInStock) || parsedInStock < 0) {
-            setError('In Stock must be a valid non-negative number.');
+            setError(t('validation.stockInvalid'));
             return;
         }
         if (isNaN(parsedMinInStock) || parsedMinInStock < 0) {
-            setError('Min In Stock must be a valid non-negative number.');
+            setError(t('validation.minStockInvalid'));
             return;
         }
 
@@ -87,9 +87,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Operation failed.');
+                setError(axiosErr.response?.data?.message || t('validation.operationFailed'));
             } else {
-                setError('An error occurred.');
+                setError(t('validation.errorOccurred'));
             }
         } finally {
             setLoading(false);
@@ -102,7 +102,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content modal-wide" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>{isEdit ? 'Edit Product' : 'Add New Product'}</h3>
+                    <h3>{isEdit ? t('modal.editProduct') : t('modal.addProduct')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -116,22 +116,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                     <div className="modal-body">
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Product Code <span className="required">*</span></label>
+                                <label>{t('form.productCode')} <span className="required">*</span></label>
                                 <input
                                     type="text"
                                     value={productCode}
                                     onChange={(e) => setProductCode(e.target.value)}
-                                    placeholder="Enter product code"
+                                    placeholder={t('form.enterProductCode')}
                                     required
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>Product Name</label>
+                                <label>{t('form.productName')}</label>
                                 <input
                                     type="text"
                                     value={productName}
                                     onChange={(e) => setProductName(e.target.value)}
-                                    placeholder="Enter product name (optional)"
+                                    placeholder={t('form.enterProductName')}
                                     maxLength={3000}
                                 />
                             </div>
@@ -139,22 +139,22 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Category <span className="required">*</span></label>
+                                <label>{t('form.category')} <span className="required">*</span></label>
                                 <input
                                     type="text"
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
-                                    placeholder="Enter category"
+                                    placeholder={t('form.enterCategory')}
                                     required
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>Unit <span className="required">*</span></label>
+                                <label>{t('form.unit')} <span className="required">*</span></label>
                                 <input
                                     type="text"
                                     value={unit}
                                     onChange={(e) => setUnit(e.target.value)}
-                                    placeholder="e.g. pcs, kg, box"
+                                    placeholder={t('form.enterUnit')}
                                     required
                                 />
                             </div>
@@ -162,7 +162,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Price <span className="required">*</span></label>
+                                <label>{t('form.price')} <span className="required">*</span></label>
                                 <input
                                     type="number"
                                     step="0.001"
@@ -174,13 +174,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>In Stock <span className="required">*</span></label>
+                                <label>{t('form.inStock')} <span className="required">*</span></label>
                                 <input
                                     type="number"
                                     min="0"
                                     value={inStock}
                                     onChange={(e) => setInStock(e.target.value)}
-                                    placeholder="Current stock quantity"
+                                    placeholder={t('table.inStock')}
                                     required
                                 />
                             </div>
@@ -188,20 +188,20 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
 
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Min In Stock <span className="required">*</span></label>
+                                <label>{t('form.minInStock')} <span className="required">*</span></label>
                                 <input
                                     type="number"
                                     min="0"
                                     value={minInStock}
                                     onChange={(e) => setMinInStock(e.target.value)}
-                                    placeholder="Minimum stock threshold"
+                                    placeholder={t('table.minStock')}
                                     required
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>Provider <span className="required">*</span></label>
+                                <label>{t('form.provider')} <span className="required">*</span></label>
                                 <select value={providerId} onChange={(e) => setProviderId(e.target.value)} required>
-                                    <option value="">Select a provider</option>
+                                    <option value="">{t('form.selectProvider')}</option>
                                     {providers.map((p) => (
                                         <option key={p.id} value={p.id}>{p.providerName}</option>
                                     ))}
@@ -211,9 +211,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSave, pr
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                         <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
+                            {loading ? t('button.saving') : isEdit ? t('button.updateProduct') : t('button.createProduct')}
                         </button>
                     </div>
                 </form>

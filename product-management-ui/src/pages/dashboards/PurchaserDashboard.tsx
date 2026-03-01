@@ -1,22 +1,24 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../../components/DashboardLayout';
 import { authService } from '../../services/authService';
 
 const PurchaserDashboard: React.FC = () => {
     const user = authService.getUser();
+    const { t } = useTranslation();
 
     const navItems = [
-        { icon: '📊', label: 'Dashboard', active: true },
-        { icon: '🛒', label: 'Purchase Orders' },
-        { icon: '📋', label: 'Approved Requests' },
-        { icon: '🏢', label: 'Vendors' },
+        { icon: '📊', label: t('nav.dashboard'), active: true },
+        { icon: '🛒', label: t('nav.purchaseOrders') },
+        { icon: '📋', label: t('nav.approved') },
+        { icon: '🏭', label: t('nav.providersManagement') },
         { icon: '📜', label: 'Purchase History' },
     ];
 
     return (
         <DashboardLayout roleName="Purchaser" navItems={navItems}>
             <div className="topbar">
-                <h2>Purchaser Dashboard</h2>
+                <h2>{t('dashboard.purchaserTitle')}</h2>
                 <div className="topbar-right">
                     <span>📅 {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
@@ -24,35 +26,35 @@ const PurchaserDashboard: React.FC = () => {
 
             <div className="dashboard-content fade-in">
                 <div className="welcome-card">
-                    <h3>Welcome back, {user?.username}! 👋</h3>
-                    <p>Manage purchase orders and vendor relationships.</p>
+                    <h3>{t('dashboard.welcomeBack', { username: user?.username })} 👋</h3>
+                    <p>{t('dashboard.purchaserAccess')}</p>
                 </div>
 
                 <div className="stats-grid">
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>🛒</div>
                         <div className="stat-value">6</div>
-                        <div className="stat-label">Active POs</div>
+                        <div className="stat-label">{t('stat.activePOs')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(251, 146, 60, 0.1)', color: '#fb923c' }}>📋</div>
                         <div className="stat-value">3</div>
-                        <div className="stat-label">To Purchase</div>
+                        <div className="stat-label">{t('stat.toPurchase')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>💰</div>
                         <div className="stat-value">$15K</div>
-                        <div className="stat-label">Spent This Month</div>
+                        <div className="stat-label">{t('stat.spentThisMonth')}</div>
                     </div>
                     <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>🏢</div>
+                        <div className="stat-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>🏭</div>
                         <div className="stat-value">12</div>
-                        <div className="stat-label">Active Vendors</div>
+                        <div className="stat-label">{t('stat.activeVendors')}</div>
                     </div>
                 </div>
 
                 <div className="content-card">
-                    <h4>Approved & Ready to Purchase</h4>
+                    <h4>{t('dashboard.approvedReadyToPurchase')}</h4>
                     <div className="activity-item">
                         <div className="activity-dot" style={{ background: '#22c55e' }}></div>
                         <span className="activity-text">Request #1042 — Laptop Dell XPS 15 ($1,500) — Approved</span>

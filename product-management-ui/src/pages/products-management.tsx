@@ -31,46 +31,46 @@ const ProductsManagement: React.FC = () => {
         switch (userRole) {
             case 'Admin':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/admin') },
-                    { icon: '👥', label: 'Users Management', onClick: () => navigate('/admin/users') },
-                    { icon: '🏢', label: 'Departments Management', onClick: () => navigate('/admin/departments') },
-                    { icon: '🏭', label: 'Providers Management', onClick: () => navigate('/admin/providers') },
-                    { icon: '📦', label: 'Products Management', active: true },
-                    { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
-                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
-                    { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/admin') },
+                    { icon: '👥', label: t('nav.usersManagement'), onClick: () => navigate('/admin/users') },
+                    { icon: '🏢', label: t('nav.departmentsManagement'), onClick: () => navigate('/admin/departments') },
+                    { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/admin/providers') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
+                    { icon: '⚙️', label: t('nav.approvalConfiguration'), onClick: () => navigate('/admin/approval-configs') },
+                    { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/admin/approval-logs') },
+                    { icon: '🔐', label: t('nav.loginTracking'), onClick: () => navigate('/admin/login-logs') },
                 ];
             case 'Approver':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/approver') },
-                    { icon: '📋', label: 'Pending Approvals', onClick: () => navigate('/approver/pending-reviews') },
-                    { icon: '✅', label: 'Approved', onClick: () => navigate('/approver/approved-requests') },
-                    { icon: '❌', label: 'Rejected', onClick: () => navigate('/approver/rejected-requests') },
-                    { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/approver/providers') },
-                    { icon: '📦', label: 'Products Management', active: true },
-                    { icon: '📝', label: 'Approval Log', onClick: () => navigate('/approver/approval-logs') },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/approver') },
+                    { icon: '📋', label: t('nav.pendingApprovals'), onClick: () => navigate('/approver/pending-reviews') },
+                    { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/approver/approved-requests') },
+                    { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/approver/rejected-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/approver/providers') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
+                    { icon: '📝', label: t('nav.approvalLog'), onClick: () => navigate('/approver/approval-logs') },
                 ];
             case 'Reviewer':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/reviewer') },
-                    { icon: '🔍', label: 'Pending Reviews', onClick: () => navigate('/reviewer/pending-reviews') },
-                    { icon: '✅', label: 'Approved', onClick: () => navigate('/reviewer/approved-requests') },
-                    { icon: '❌', label: 'Rejected', onClick: () => navigate('/reviewer/rejected-requests') },
-                    { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/reviewer/providers') },
-                    { icon: '📦', label: 'Products Management', active: true },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
+                    { icon: '🔍', label: t('nav.pendingReviews'), onClick: () => navigate('/reviewer/pending-reviews') },
+                    { icon: '✅', label: t('nav.approved'), onClick: () => navigate('/reviewer/approved-requests') },
+                    { icon: '❌', label: t('nav.rejected'), onClick: () => navigate('/reviewer/rejected-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/reviewer/providers') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
                 ];
             case 'Receiver':
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/receiver') },
-                    { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/receiver/purchase-orders') },
-                    { icon: '📦', label: 'Products Management', active: true },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/receiver') },
+                    { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/receiver/purchase-orders') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
                 ];
             default:
                 return [
-                    { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/requester') },
-                    { icon: '📝', label: 'My Requests', onClick: () => navigate('/requester/my-requests') },
-                    { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/requester/providers') },
-                    { icon: '📦', label: 'Products Management', active: true },
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/requester') },
+                    { icon: '📝', label: t('nav.myRequests'), onClick: () => navigate('/requester/my-requests') },
+                    { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/requester/providers') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
                 ];
         }
     };

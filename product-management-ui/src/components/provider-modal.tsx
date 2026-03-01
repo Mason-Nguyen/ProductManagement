@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { ProviderDto, CreateProviderRequest, UpdateProviderRequest } from '../services/provider-service';
+import { useTranslation } from 'react-i18next';
 
 interface ProviderModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface ProviderModalProps {
 }
 
 const ProviderModal: React.FC<ProviderModalProps> = ({ isOpen, onClose, onSave, editProvider }) => {
+    const { t } = useTranslation();
     const [providerName, setProviderName] = useState('');
     const [taxIdentification, setTaxIdentification] = useState('');
     const [address, setAddress] = useState('');
@@ -54,9 +56,9 @@ const ProviderModal: React.FC<ProviderModalProps> = ({ isOpen, onClose, onSave, 
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Operation failed.');
+                setError(axiosErr.response?.data?.message || t('validation.operationFailed'));
             } else {
-                setError('An error occurred.');
+                setError(t('validation.errorOccurred'));
             }
         } finally {
             setLoading(false);
@@ -69,7 +71,7 @@ const ProviderModal: React.FC<ProviderModalProps> = ({ isOpen, onClose, onSave, 
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>{isEdit ? 'Edit Provider' : 'Add New Provider'}</h3>
+                    <h3>{isEdit ? t('modal.editProvider') : t('modal.addProvider')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -83,22 +85,22 @@ const ProviderModal: React.FC<ProviderModalProps> = ({ isOpen, onClose, onSave, 
                     <div className="modal-body">
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Provider Name</label>
+                                <label>{t('form.providerName')}</label>
                                 <input
                                     type="text"
                                     value={providerName}
                                     onChange={(e) => setProviderName(e.target.value)}
-                                    placeholder="Enter provider name"
+                                    placeholder={t('form.enterProviderName')}
                                     required
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>Tax Identification</label>
+                                <label>{t('modal.taxIdentification')}</label>
                                 <input
                                     type="text"
                                     value={taxIdentification}
                                     onChange={(e) => setTaxIdentification(e.target.value)}
-                                    placeholder="Enter tax ID"
+                                    placeholder={t('modal.enterTaxId')}
                                     required
                                 />
                             </div>
@@ -106,42 +108,42 @@ const ProviderModal: React.FC<ProviderModalProps> = ({ isOpen, onClose, onSave, 
 
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Contact Person</label>
+                                <label>{t('form.contactPerson')}</label>
                                 <input
                                     type="text"
                                     value={contactPerson}
                                     onChange={(e) => setContactPerson(e.target.value)}
-                                    placeholder="Enter contact person"
+                                    placeholder={t('form.enterContactPerson')}
                                 />
                             </div>
                             <div className="modal-form-group">
-                                <label>Phone Number</label>
+                                <label>{t('form.phoneNumber')}</label>
                                 <input
                                     type="text"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
-                                    placeholder="Enter phone number"
+                                    placeholder={t('form.enterPhoneNumber')}
                                 />
                             </div>
                         </div>
 
                         <div className="modal-form-row">
                             <div className="modal-form-group" style={{ width: '100%' }}>
-                                <label>Address</label>
+                                <label>{t('form.address')}</label>
                                 <input
                                     type="text"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
-                                    placeholder="Enter address"
+                                    placeholder={t('form.enterAddress')}
                                 />
                             </div>
                         </div>
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                         <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? 'Saving...' : isEdit ? 'Update Provider' : 'Create Provider'}
+                            {loading ? t('button.saving') : isEdit ? t('button.updateProvider') : t('button.createProvider')}
                         </button>
                     </div>
                 </form>

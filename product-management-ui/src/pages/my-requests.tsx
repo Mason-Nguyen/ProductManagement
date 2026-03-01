@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardLayout from '../components/DashboardLayout';
 import PurchaseRequestModal from '../components/purchase-request-modal';
 import RequestDetailModal from '../components/request-detail-modal';
@@ -10,6 +11,7 @@ import { formatVND } from '../utils/formatters';
 
 const MyRequests: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const currentUser = authService.getUser();
     const [requests, setRequests] = useState<PurchaseRequestDto[]>([]);
     const [loading, setLoading] = useState(true);
@@ -20,11 +22,11 @@ const MyRequests: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const navItems = [
-        { icon: '📊', label: 'Dashboard', onClick: () => navigate('/dashboard/requester') },
-        { icon: '📝', label: 'My Requests', active: true },
-        { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/requester/providers') },
-        { icon: '📦', label: 'Products Management', onClick: () => navigate('/requester/products') },
-        { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/requester/purchase-orders') },
+        { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/requester') },
+        { icon: '📝', label: t('nav.myRequests'), active: true },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/requester/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/requester/products') },
+        { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/requester/purchase-orders') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -100,8 +102,8 @@ const MyRequests: React.FC = () => {
     };
 
     const getUrgentBadge = (urgent: number) => {
-        if (urgent === 1) return <span className="urgent-badge">🔥 Urgent</span>;
-        return <span className="normal-badge">Normal</span>;
+        if (urgent === 1) return <span className="urgent-badge">🔥 {t('status.urgent')}</span>;
+        return <span className="normal-badge">{t('status.normal')}</span>;
     };
 
     const formatDate = (dateStr: string) => {
@@ -115,9 +117,9 @@ const MyRequests: React.FC = () => {
     return (
         <DashboardLayout roleName="Requester" navItems={navItems}>
             <div className="topbar">
-                <h2>My Requests</h2>
+                <h2>{t('page.myRequests')}</h2>
                 <div className="topbar-right">
-                    <span>{requests.length} total requests</span>
+                    <span>{requests.length} {t('page.totalRequests')}</span>
                 </div>
             </div>
 
@@ -127,22 +129,22 @@ const MyRequests: React.FC = () => {
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(100, 116, 139, 0.1)', color: '#64748b' }}>📝</div>
                         <div className="stat-value">{requests.filter(r => r.status === 0).length}</div>
-                        <div className="stat-label">Draft</div>
+                        <div className="stat-label">{t('stat.draft')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(251, 146, 60, 0.1)', color: '#fb923c' }}>⏳</div>
                         <div className="stat-value">{requests.filter(r => r.status === 1).length}</div>
-                        <div className="stat-label">Waiting for Review</div>
+                        <div className="stat-label">{t('stat.waitingForReview')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✅</div>
                         <div className="stat-value">{requests.filter(r => r.status === 2).length}</div>
-                        <div className="stat-label">Approved</div>
+                        <div className="stat-label">{t('stat.approved')}</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>❌</div>
                         <div className="stat-value">{requests.filter(r => r.status === 4).length}</div>
-                        <div className="stat-label">Rejected</div>
+                        <div className="stat-label">{t('stat.rejected')}</div>
                     </div>
                 </div>
 
@@ -153,38 +155,38 @@ const MyRequests: React.FC = () => {
                             <span className="search-icon">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search by title..."
+                                placeholder={t('page.searchByTitle')}
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <button className="btn-add" onClick={openCreateModal}>
-                            <span>➕</span> New Request
+                            <span>➕</span> {t('button.createRequest')}
                         </button>
                     </div>
 
                     {loading ? (
-                        <div className="table-loading">Loading requests...</div>
+                        <div className="table-loading">{t('page.loadingRequests')}</div>
                     ) : (
                         <div className="table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Created By</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Products</th>
-                                        <th>Total Price</th>
-                                        <th>Created</th>
-                                        <th>Modified</th>
-                                        <th>Actions</th>
+                                        <th>{t('table.title')}</th>
+                                        <th>{t('table.createdBy')}</th>
+                                        <th>{t('table.priority')}</th>
+                                        <th>{t('table.status')}</th>
+                                        <th>{t('table.products')}</th>
+                                        <th>{t('table.totalPrice')}</th>
+                                        <th>{t('table.createdDate')}</th>
+                                        <th>{t('table.modifiedDate')}</th>
+                                        <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredRequests.length === 0 ? (
                                         <tr>
-                                            <td colSpan={9} className="table-empty">No requests found</td>
+                                            <td colSpan={9} className="table-empty">{t('page.noRequestsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredRequests.map(request => (
@@ -206,11 +208,11 @@ const MyRequests: React.FC = () => {
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>
                                                     <div className="action-btns">
-                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title="View Details">👁️</button>
+                                                        <button className="btn-detail" onClick={() => setDetailRequest(request)} title={t('button.viewDetails')}>👁️</button>
                                                         {isCreator(request) && request.status === 0 && (
                                                             <>
-                                                                <button className="btn-edit" onClick={() => openEditModal(request)} title="Edit">✏️</button>
-                                                                <button className="btn-delete" onClick={() => setDeleteConfirm(request)} title="Cancel">🗑️</button>
+                                                                <button className="btn-edit" onClick={() => openEditModal(request)} title={t('common.edit')}>✏️</button>
+                                                                <button className="btn-delete" onClick={() => setDeleteConfirm(request)} title={t('common.delete')}>🗑️</button>
                                                             </>
                                                         )}
                                                     </div>
@@ -247,12 +249,12 @@ const MyRequests: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
                     <div className="modal-content confirm-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>Cancel Request</h3>
+                            <h3>{t('modal.deleteRequest')}</h3>
                             <button className="modal-close" onClick={() => setDeleteConfirm(null)}>✕</button>
                         </div>
                         <div className="modal-body">
                             <p className="confirm-text">
-                                Are you sure you want to cancel <strong>{deleteConfirm.title}</strong>?
+                                {t('modal.deleteRequestConfirm')}
                             </p>
                             <p className="confirm-hint">This request will be marked as cancelled.</p>
                         </div>
