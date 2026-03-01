@@ -6,6 +6,7 @@ import { purchaseRequestService } from '../services/purchase-request-service';
 import type { PurchaseRequestDto, CreatePurchaseRequestDto, UpdatePurchaseRequestDto } from '../services/purchase-request-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { formatVND } from '../utils/formatters';
 
 const MyRequests: React.FC = () => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const MyRequests: React.FC = () => {
         { icon: '📝', label: 'My Requests', active: true },
         { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/requester/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/requester/products') },
+        { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/requester/purchase-orders') },
     ];
 
     const fetchData = useCallback(async () => {
@@ -199,7 +201,7 @@ const MyRequests: React.FC = () => {
                                                 <td>{getUrgentBadge(request.urgent)}</td>
                                                 <td>{getStatusBadge(request.status, request.statusText)}</td>
                                                 <td className="td-number">{request.products.length}</td>
-                                                <td className="td-price">{request.totalPrice.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(request.totalPrice)}</td>
                                                 <td>{formatDate(request.createdDate)}</td>
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>

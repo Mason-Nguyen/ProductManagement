@@ -7,6 +7,7 @@ import { providerService } from '../services/provider-service';
 import type { ProviderDto } from '../services/provider-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { formatVND } from '../utils/formatters';
 
 const ProductsManagement: React.FC = () => {
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ const ProductsManagement: React.FC = () => {
                     { icon: '📦', label: 'Products Management', active: true },
                     { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
                     { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
+                    { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
                 ];
             case 'Approver':
                 return [
@@ -144,7 +146,7 @@ const ProductsManagement: React.FC = () => {
     };
 
     const formatPrice = (price: number) => {
-        return price.toFixed(3);
+        return formatVND(price);
     };
 
     return (

@@ -22,6 +22,7 @@ const ApprovalLogPage: React.FC = () => {
                 { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
                 { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
                 { icon: '📝', label: 'Approval Log', active: true },
+                { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
             ];
         }
         // Approver
@@ -63,11 +64,6 @@ const ApprovalLogPage: React.FC = () => {
         });
     };
 
-    const getActionBadge = (action: number, actionText: string) => {
-        const cls = action === 2 ? 'approved' : 'rejected';
-        const icon = action === 2 ? '✅' : '❌';
-        return <span className={`request-status-badge status-${cls}`}>{icon} {actionText}</span>;
-    };
 
     return (
         <DashboardLayout roleName={userRole} navItems={getNavItems()}>
@@ -98,48 +94,46 @@ const ApprovalLogPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Table */}
+                {/* Text List */}
                 <div className="content-card">
                     {loading ? (
                         <div className="table-loading">Loading approval logs...</div>
-                    ) : (
-                        <div className="table-wrapper">
-                            <table className="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Log Time</th>
-                                        <th>Request Title</th>
-                                        <th>Action</th>
-                                        <th>Approver Comment</th>
-                                        <th>Approver</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {logs.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={5} className="table-empty">No approval logs found</td>
-                                        </tr>
-                                    ) : (
-                                        logs.map((log) => (
-                                            <tr key={log.id}>
-                                                <td>{formatDateTime(log.logTime)}</td>
-                                                <td>
-                                                    <div className="user-cell">
-                                                        <div className="user-cell-avatar" style={{ background: log.action === 2 ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'linear-gradient(135deg, #ef4444, #dc2626)' }}>
-                                                            {log.requestTitle.charAt(0).toUpperCase()}
-                                                        </div>
-                                                        <span>{log.requestTitle}</span>
-                                                    </div>
-                                                </td>
-                                                <td>{getActionBadge(log.action, log.actionText)}</td>
-                                                <td className="td-address">{log.approverComment || '—'}</td>
-                                                <td>{log.approverName}</td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                    ) : logs.length === 0 ? (
+                        <div className="table-empty" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
+                            No approval logs found
                         </div>
+                    ) : (
+                        <ul style={{ listStyle: 'none', padding: '1rem 1.5rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {logs.map((log) => (
+                                <li key={log.id} style={{
+                                    padding: '0.875rem 1.25rem',
+                                    borderRadius: '0.5rem',
+                                    background: log.action === 2
+                                        ? 'rgba(34, 197, 94, 0.08)'
+                                        : 'rgba(239, 68, 68, 0.08)',
+                                    border: '1px solid ' + (log.action === 2
+                                        ? 'rgba(34, 197, 94, 0.2)'
+                                        : 'rgba(239, 68, 68, 0.2)'),
+                                    borderLeft: '3px solid ' + (log.action === 2 ? '#22c55e' : '#ef4444'),
+                                    fontSize: '0.95rem',
+                                    color: '#e2e8f0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    flexWrap: 'wrap',
+                                }}>
+                                    <span style={{ color: '#94a3b8' }}>{formatDateTime(log.logTime)}</span>
+                                    <span style={{ color: '#475569' }}>—</span>
+                                    <span style={{ fontWeight: 600, color: '#000000' }}>{log.requestTitle}</span>
+                                    <span style={{ color: '#475569' }}>—</span>
+                                    <span style={{ color: '#000000', fontWeight: 600 }}>{log.action === 2 ? '✅ Approved' : '❌ Rejected'}</span>
+                                    <span style={{ color: '#475569' }}>—</span>
+                                    <span style={{ color: '#64748b', fontSize: '0.85rem' }}>{log.approverComment || '—'}</span>
+                                    <span style={{ color: '#475569' }}>—</span>
+                                    <span style={{ fontWeight: 600, color: '#000000' }}>{log.approverName}</span>
+                                </li>
+                            ))}
+                        </ul>
                     )}
                 </div>
             </div>

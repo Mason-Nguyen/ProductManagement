@@ -19,6 +19,7 @@ import RejectedRequests from './pages/rejected-requests';
 import PurchaseOrders from './pages/purchase-orders';
 import ApprovalConfigManagement from './pages/approval-config-management';
 import ApprovalLogPage from './pages/approval-log';
+import LoginLogPage from './pages/login-log';
 
 function App() {
   return (
@@ -97,6 +98,11 @@ function App() {
             <ApprovalLogPage />
           </ProtectedRoute>
         } />
+        <Route path="/admin/login-logs" element={
+          <ProtectedRoute allowedRoles={['Admin']}>
+            <LoginLogPage />
+          </ProtectedRoute>
+        } />
 
         {/* Requester Management Pages */}
         <Route path="/requester/providers" element={
@@ -112,6 +118,11 @@ function App() {
         <Route path="/requester/my-requests" element={
           <ProtectedRoute allowedRoles={['Requester']}>
             <MyRequests />
+          </ProtectedRoute>
+        } />
+        <Route path="/requester/purchase-orders" element={
+          <ProtectedRoute allowedRoles={['Requester']}>
+            <PurchaseOrders />
           </ProtectedRoute>
         } />
 

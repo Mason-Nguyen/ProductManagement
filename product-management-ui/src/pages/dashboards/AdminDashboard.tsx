@@ -15,6 +15,7 @@ const AdminDashboard: React.FC = () => {
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
         { icon: '⚙️', label: 'Approval Configuration', onClick: () => navigate('/admin/approval-configs') },
         { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
+        { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
     ];
 
     return (

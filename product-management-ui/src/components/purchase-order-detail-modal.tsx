@@ -3,6 +3,7 @@ import type { PurchaseOrderDto } from '../services/purchase-order-service';
 import { purchaseOrderService } from '../services/purchase-order-service';
 import { purchaseProductOrderService } from '../services/purchase-product-order-service';
 import type { PurchaseProductOrderDto } from '../services/purchase-product-order-service';
+import { formatVND } from '../utils/formatters';
 import ImportProductsModal from './import-products-modal';
 
 interface PurchaseOrderDetailModalProps {
@@ -20,6 +21,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
     const [successMsg, setSuccessMsg] = useState('');
     const [currentOrder, setCurrentOrder] = useState<PurchaseOrderDto | null>(null);
     const [importModalOpen, setImportModalOpen] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
         if (isOpen && order) {
@@ -89,6 +91,23 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
             hour: '2-digit',
             minute: '2-digit',
         });
+    };
+
+    const handleExportPdf = async () => {
+        try {
+            setExporting(true);
+            setError('');
+            await purchaseOrderService.exportPdf(currentOrder.id);
+        } catch (err: unknown) {
+            if (err && typeof err === 'object' && 'response' in err) {
+                const axiosErr = err as { response?: { data?: { message?: string } } };
+                setError(axiosErr.response?.data?.message || 'Failed to export PDF.');
+            } else {
+                setError('An error occurred while exporting PDF.');
+            }
+        } finally {
+            setExporting(false);
+        }
     };
 
     const canSetOrdering = currentOrder.status === 0;
@@ -162,7 +181,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                             <div className="detail-field">
                                 <label>Total Price</label>
                                 <div className="detail-value">
-                                    <span className="total-price-value">{currentOrder.totalPrice.toFixed(3)}</span>
+                                    <span className="total-price-value">{formatVND(currentOrder.totalPrice)}</span>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +239,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                                     <td>{p.productName || 'N/A'}</td>
                                                     <td><span className="category-tag">{p.category}</span></td>
                                                     <td>{p.unit}</td>
-                                                    <td className="td-price">{p.price.toFixed(3)}</td>
+                                                    <td className="td-price">{formatVND(p.price)}</td>
                                                     <td className="td-number">{p.quantity}</td>
                                                     <td>{p.importedDate ? formatDate(p.importedDate) : '—'}</td>
                                                     <td>{p.checkedUserName || '—'}</td>
@@ -238,6 +257,14 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
 
                     <div className="modal-footer">
                         <button className="btn-cancel" onClick={onClose}>Close</button>
+                        <button
+                            className="btn-save"
+                            onClick={handleExportPdf}
+                            disabled={exporting}
+                            style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+                        >
+                            {exporting ? 'Exporting...' : '📄 Export PDF'}
+                        </button>
                         {canCancel && (
                             <button
                                 className="btn-danger"

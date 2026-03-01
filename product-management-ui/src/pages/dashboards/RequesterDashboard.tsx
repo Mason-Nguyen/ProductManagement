@@ -12,6 +12,7 @@ const RequesterDashboard: React.FC = () => {
         { icon: '📝', label: 'My Requests', onClick: () => navigate('/requester/my-requests') },
         { icon: '🏢', label: 'Providers Management', onClick: () => navigate('/requester/providers') },
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/requester/products') },
+        { icon: '📋', label: 'Purchase Orders', onClick: () => navigate('/requester/purchase-orders') },
     ];
 
     return (

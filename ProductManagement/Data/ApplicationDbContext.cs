@@ -21,6 +21,7 @@ namespace ProductManagement.Data
         public DbSet<PurchaseProductOrder> PurchaseProductOrders { get; set; }
         public DbSet<ApprovalConfig> ApprovalConfigs { get; set; }
         public DbSet<ApprovalLog> ApprovalLogs { get; set; }
+        public DbSet<LoginLog> LoginLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -244,6 +245,23 @@ namespace ProductManagement.Data
             modelBuilder.Entity<ApprovalLog>()
                 .Property(al => al.ApproverComment)
                 .HasMaxLength(3000);
+
+            // Configure LoginLog Id as GUID v4
+            modelBuilder.Entity<LoginLog>()
+                .Property(ll => ll.Id)
+                .HasDefaultValueSql("NEWID()");
+
+            // Configure LoginLog -> User relationship
+            modelBuilder.Entity<LoginLog>()
+                .HasOne(ll => ll.User)
+                .WithMany()
+                .HasForeignKey(ll => ll.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure LoginLog IpAddress max length
+            modelBuilder.Entity<LoginLog>()
+                .Property(ll => ll.IpAddress)
+                .HasMaxLength(100);
 
             // Seed Roles (using GUID v4)
             var roles = new List<Role>

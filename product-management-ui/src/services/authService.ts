@@ -40,7 +40,19 @@ export const authService = {
         return data;
     },
 
-    logout(): void {
+    async logout(): Promise<void> {
+        // Call backend to log the logout action before clearing token
+        try {
+            const token = this.getToken();
+            if (token) {
+                await axios.post(`${API_URL}/logout`, {}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            }
+        } catch {
+            // Fire-and-forget: don't block logout if API call fails
+        }
+
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('rememberMe');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { PurchaseRequestDto, CreatePurchaseRequestDto, UpdatePurchaseRequestDto, AvailableProductDto, PurchaseProductDto } from '../services/purchase-request-service';
 import { purchaseRequestService } from '../services/purchase-request-service';
+import { formatVND } from '../utils/formatters';
 
 interface SelectedProduct {
     productId: string;
@@ -337,7 +338,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                             <td><span className="category-tag">{p.category}</span></td>
                                                             <td>{p.providerName}</td>
                                                             <td>{p.unit}</td>
-                                                            <td className="td-price">{p.price.toFixed(3)}</td>
+                                                            <td className="td-price">{formatVND(p.price)}</td>
                                                             <td>
                                                                 <span className={`stock-badge ${p.inStockStatus === 0 ? 'out-of-stock' : 'almost-out'}`}>
                                                                     {p.inStockStatus === 0 ? '🔴' : '🟡'} {p.inStockStatusText}
@@ -376,7 +377,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                     <td>{p.productName || 'N/A'}</td>
                                                     <td><span className="category-tag">{p.category}</span></td>
                                                     <td>{p.unit}</td>
-                                                    <td className="td-price">{p.price.toFixed(3)}</td>
+                                                    <td className="td-price">{formatVND(p.price)}</td>
                                                     <td className="td-number">
                                                         <input
                                                             type="number"
@@ -396,7 +397,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                         />
                                                     </td>
                                                     <td className="td-price">
-                                                        {(p.price * p.quantityRequest).toFixed(3)}
+                                                        {formatVND(p.price * p.quantityRequest)}
                                                     </td>
                                                     <td>
                                                         <button
@@ -414,7 +415,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                     </table>
                                     <div className="total-price-row">
                                         <strong>Total Price:</strong>
-                                        <span className="total-price-value">{totalPrice.toFixed(3)}</span>
+                                        <span className="total-price-value">{formatVND(totalPrice)}</span>
                                     </div>
                                 </div>
                             )}

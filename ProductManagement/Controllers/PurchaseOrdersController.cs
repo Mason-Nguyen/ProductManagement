@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductManagement.Data;
 using ProductManagement.DTOs;
 using ProductManagement.Models;
+using ProductManagement.Services;
 using System.Security.Claims;
 
 namespace ProductManagement.Controllers
@@ -415,5 +416,99 @@ namespace ProductManagement.Controllers
 
             return Ok(MapToDto(order));
         }
+
+        // GET: api/purchaseorders/{id}/export-pdf
+        [HttpGet("{id}/export-pdf")]
+        public async Task<IActionResult> ExportPdf(Guid id)
+        {
+            var order = await _context.PurchaseOrders
+                .Include(po => po.Reviewer)
+                .Include(po => po.Approver)
+                .Include(po => po.CreatedUser)
+                .Include(po => po.PurchaseRequest)
+                .FirstOrDefaultAsync(po => po.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Purchase order not found." });
+
+            // Load product orders for this PO
+            var productOrders = await _context.PurchaseProductOrders
+                .Include(ppo => ppo.Product)
+                .Include(ppo => ppo.CheckedUser)
+                .Where(ppo => ppo.PurchaseOrderId == id)
+                .OrderBy(ppo => ppo.Product.ProductCode)
+                .ToListAsync();
+
+            // Build QuantityRequest lookup from PurchaseProducts
+            var purchaseProducts = await _context.PurchaseProducts
+                .Where(pp => pp.RequestId == order.PurchaseRequestId)
+                .ToListAsync();
+            var qtyRequestLookup = purchaseProducts.ToDictionary(pp => pp.ProductId, pp => pp.QuantityRequest);
+
+            // Generate PDF
+            var pdfService = new PurchaseOrderPdfService();
+            var pdfBytes = pdfService.GeneratePdf(order, productOrders, qtyRequestLookup);
+
+            // Sanitize title for filename
+            var safeTitle = string.Join("_", order.Title.Split(Path.GetInvalidFileNameChars()));
+            var dateStr = order.CreatedDate.ToString("yyyyMMdd");
+            var fileName = $"PurchaseOrder_{safeTitle}_{dateStr}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
+        // POST: api/purchaseorders/export-excel
+        [HttpPost("export-excel")]
+        public async Task<IActionResult> ExportExcel([FromBody] ExportExcelRequest request)
+        {
+            if (request.OrderIds == null || request.OrderIds.Count == 0)
+                return BadRequest(new { message = "No order IDs provided." });
+
+            var orders = await _context.PurchaseOrders
+                .Include(po => po.Reviewer)
+                .Include(po => po.Approver)
+                .Include(po => po.CreatedUser)
+                .Include(po => po.PurchaseRequest)
+                .Where(po => request.OrderIds.Contains(po.Id))
+                .OrderByDescending(po => po.CreatedDate)
+                .ToListAsync();
+
+            if (orders.Count == 0)
+                return NotFound(new { message = "No orders found." });
+
+            // Load all product orders for these orders
+            var orderIds = orders.Select(o => o.Id).ToList();
+            var allProductOrders = await _context.PurchaseProductOrders
+                .Include(ppo => ppo.Product)
+                .Include(ppo => ppo.CheckedUser)
+                .Where(ppo => orderIds.Contains(ppo.PurchaseOrderId))
+                .OrderBy(ppo => ppo.Product.ProductCode)
+                .ToListAsync();
+
+            var productsByOrder = allProductOrders
+                .GroupBy(ppo => ppo.PurchaseOrderId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // Build QuantityRequest lookup from all related PurchaseProducts
+            var requestIds = orders.Select(o => o.PurchaseRequestId).Distinct().ToList();
+            var purchaseProducts = await _context.PurchaseProducts
+                .Where(pp => requestIds.Contains(pp.RequestId))
+                .ToListAsync();
+            var qtyRequestLookup = purchaseProducts.ToDictionary(pp => pp.ProductId, pp => pp.QuantityRequest);
+
+            // Generate Excel
+            var excelService = new PurchaseOrderExcelService();
+            var excelBytes = excelService.GenerateExcel(orders, productsByOrder, qtyRequestLookup);
+
+            var dateStr = DateTime.UtcNow.ToString("yyyyMMdd");
+            var fileName = $"PurchaseOrders_{dateStr}.xlsx";
+
+            return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+    }
+
+    public class ExportExcelRequest
+    {
+        public List<Guid> OrderIds { get; set; } = new();
     }
 }

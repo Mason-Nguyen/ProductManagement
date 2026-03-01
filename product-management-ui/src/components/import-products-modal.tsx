@@ -3,6 +3,7 @@ import type { PurchaseOrderDto } from '../services/purchase-order-service';
 import { purchaseOrderService } from '../services/purchase-order-service';
 import { purchaseProductOrderService } from '../services/purchase-product-order-service';
 import type { PurchaseProductOrderDto } from '../services/purchase-product-order-service';
+import { formatVND } from '../utils/formatters';
 
 interface ImportProductsModalProps {
     isOpen: boolean;
@@ -157,7 +158,7 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
                                                 <td><strong>{p.productCode}</strong></td>
                                                 <td>{p.productName || 'N/A'}</td>
                                                 <td>{p.unit}</td>
-                                                <td className="td-price">{p.price.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(p.price)}</td>
                                                 <td className="td-number">{p.minInStock}</td>
                                                 <td className="td-number">{p.inStock}</td>
                                                 <td className="td-number">{p.quantityRequest}</td>
@@ -192,7 +193,7 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
 
                     <div className="total-price-row">
                         <span>Projected Total Price:</span>
-                        <span className="total-price-value">{calculatedTotalPrice.toFixed(3)}</span>
+                        <span className="total-price-value">{formatVND(calculatedTotalPrice)}</span>
                     </div>
                 </div>
 

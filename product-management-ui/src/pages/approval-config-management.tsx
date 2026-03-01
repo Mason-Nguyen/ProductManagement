@@ -26,6 +26,7 @@ const ApprovalConfigManagement: React.FC = () => {
         { icon: '📦', label: 'Products Management', onClick: () => navigate('/admin/products') },
         { icon: '⚙️', label: 'Approval Configuration', active: true },
         { icon: '📝', label: 'Approval Log', onClick: () => navigate('/admin/approval-logs') },
+        { icon: '🔐', label: 'Login Tracking', onClick: () => navigate('/admin/login-logs') },
     ];
 
     const fetchData = useCallback(async () => {

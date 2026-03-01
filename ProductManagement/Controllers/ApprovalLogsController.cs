@@ -26,7 +26,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/approvallogs
         [HttpGet]
-        [Authorize(Roles = "Admin,Approver")]
+        [Authorize(Roles = "Admin,Approver,Reviewer")]
         public async Task<IActionResult> GetAll()
         {
             var logs = await _context.ApprovalLogs

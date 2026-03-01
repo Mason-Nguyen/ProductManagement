@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProductManagement.Data;
 using ProductManagement.DTOs;
+using ProductManagement.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -42,6 +44,18 @@ namespace ProductManagement.Controllers
                 return Unauthorized(new { message = "Account is disabled." });
 
             var token = GenerateJwtToken(user);
+
+            // Create login log
+            var loginLog = new LoginLog
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Action = 1, // Login
+                ActionTime = DateTime.UtcNow,
+                IpAddress = GetClientIpAddress()
+            };
+            _context.LoginLogs.Add(loginLog);
+            await _context.SaveChangesAsync();
 
             return Ok(new LoginResponse
             {
@@ -112,6 +126,41 @@ namespace ProductManagement.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string GetClientIpAddress()
+        {
+            // Check X-Forwarded-For header first (for reverse proxy scenarios)
+            var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(forwardedFor))
+            {
+                // Take the first IP if there are multiple
+                return forwardedFor.Split(',')[0].Trim();
+            }
+
+            return HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized(new { message = "Invalid token." });
+
+            var loginLog = new LoginLog
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Action = 2, // Logout
+                ActionTime = DateTime.UtcNow,
+                IpAddress = GetClientIpAddress()
+            };
+            _context.LoginLogs.Add(loginLog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Logged out successfully." });
         }
     }
 }

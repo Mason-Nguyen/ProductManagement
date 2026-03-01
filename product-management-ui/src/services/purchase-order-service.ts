@@ -63,4 +63,59 @@ export const purchaseOrderService = {
         const response = await axios.post<PurchaseOrderDto>(`${API_URL}/${orderId}/import`, items, { headers: getAuthHeaders() });
         return response.data;
     },
+
+    async exportPdf(orderId: string): Promise<void> {
+        const response = await axios.get(`${API_URL}/${orderId}/export-pdf`, {
+            headers: getAuthHeaders(),
+            responseType: 'blob',
+        });
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Extract filename from Content-Disposition header or use default
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName = 'PurchaseOrder.pdf';
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename\*?=(?:UTF-8''|"?)([^";]+)/i);
+            if (match) {
+                fileName = decodeURIComponent(match[1].replace(/"/g, ''));
+            }
+        }
+
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    },
+
+    async exportExcel(orderIds: string[]): Promise<void> {
+        const response = await axios.post(`${API_URL}/export-excel`, { orderIds }, {
+            headers: getAuthHeaders(),
+            responseType: 'blob',
+        });
+
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Extract filename from Content-Disposition header or use default
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName = 'PurchaseOrders.xlsx';
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename\*?=(?:UTF-8''|"?)([^";]+)/i);
+            if (match) {
+                fileName = decodeURIComponent(match[1].replace(/"/g, ''));
+            }
+        }
+
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    },
 };

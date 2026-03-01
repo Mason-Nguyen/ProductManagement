@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
 import type { ApprovalConfigDto } from '../services/approval-config-service';
+import { formatVND } from '../utils/formatters';
 
 interface ReviewDetailModalProps {
     isOpen: boolean;
@@ -222,16 +223,16 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                                                 <td><strong>{p.productCode}</strong></td>
                                                 <td><span className="category-tag">{p.category}</span></td>
                                                 <td>{p.unit}</td>
-                                                <td className="td-price">{p.price.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(p.price)}</td>
                                                 <td className="td-number">{p.quantityRequest}</td>
-                                                <td className="td-price">{p.lineTotal.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(p.lineTotal)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                                 <div className="total-price-row">
                                     <strong>Total Price:</strong>
-                                    <span className="total-price-value">{request.totalPrice.toFixed(3)}</span>
+                                    <span className="total-price-value">{formatVND(request.totalPrice)}</span>
                                 </div>
                             </div>
                         ) : (

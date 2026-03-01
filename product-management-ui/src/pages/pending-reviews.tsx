@@ -7,6 +7,7 @@ import { approvalConfigService } from '../services/approval-config-service';
 import type { ApprovalConfigDto } from '../services/approval-config-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { formatVND } from '../utils/formatters';
 
 const PendingReviews: React.FC = () => {
     const navigate = useNavigate();
@@ -171,7 +172,7 @@ const PendingReviews: React.FC = () => {
                                                 <td>{request.createdUserName}</td>
                                                 <td>{getUrgentBadge(request.urgent)}</td>
                                                 <td className="td-number">{request.products.length}</td>
-                                                <td className="td-price">{request.totalPrice.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(request.totalPrice)}</td>
                                                 <td>{formatDate(request.createdDate)}</td>
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>

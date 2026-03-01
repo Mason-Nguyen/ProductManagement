@@ -5,6 +5,7 @@ import { reviewService } from '../services/review-service';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { formatVND } from '../utils/formatters';
 
 const RejectedRequests: React.FC = () => {
     const navigate = useNavigate();
@@ -147,7 +148,7 @@ const RejectedRequests: React.FC = () => {
                                                 <td>{request.reviewerName || '—'}</td>
                                                 <td>{getUrgentBadge(request.urgent)}</td>
                                                 <td className="td-number">{request.products.length}</td>
-                                                <td className="td-price">{request.totalPrice.toFixed(3)}</td>
+                                                <td className="td-price">{formatVND(request.totalPrice)}</td>
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>
                                                     <div className="action-btns">
