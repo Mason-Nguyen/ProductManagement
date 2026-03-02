@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PurchaseOrderDto } from '../services/purchase-order-service';
 import { purchaseOrderService } from '../services/purchase-order-service';
 import { purchaseProductOrderService } from '../services/purchase-product-order-service';
 import type { PurchaseProductOrderDto } from '../services/purchase-product-order-service';
 import { formatVND } from '../utils/formatters';
 import ImportProductsModal from './import-products-modal';
+import { authService } from '../services/authService';
 
 interface PurchaseOrderDetailModalProps {
     isOpen: boolean;
@@ -14,6 +16,7 @@ interface PurchaseOrderDetailModalProps {
 }
 
 const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isOpen, onClose, order, onStatusChange }) => {
+    const { t } = useTranslation();
     const [products, setProducts] = useState<PurchaseProductOrderDto[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [updating, setUpdating] = useState(false);
@@ -48,14 +51,14 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
             setSuccessMsg('');
             const updated = await purchaseOrderService.setOrdering(currentOrder.id);
             setCurrentOrder(updated);
-            setSuccessMsg('✅ Order status updated to Ordering!');
+            setSuccessMsg(t('modal.purchaseOrderDetail.orderStatusUpdated'));
             onStatusChange?.();
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to update order.');
+                setError(axiosErr.response?.data?.message || t('modal.purchaseOrderDetail.failedToUpdateOrder'));
             } else {
-                setError('An error occurred while updating the order.');
+                setError(t('modal.purchaseOrderDetail.errorUpdatingOrder'));
             }
         } finally {
             setUpdating(false);
@@ -69,14 +72,14 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
             setSuccessMsg('');
             const updated = await purchaseOrderService.cancel(currentOrder.id);
             setCurrentOrder(updated);
-            setSuccessMsg('✅ Order has been cancelled.');
+            setSuccessMsg(t('modal.purchaseOrderDetail.orderCancelled'));
             onStatusChange?.();
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to cancel order.');
+                setError(axiosErr.response?.data?.message || t('modal.purchaseOrderDetail.failedToCancelOrder'));
             } else {
-                setError('An error occurred while cancelling the order.');
+                setError(t('modal.purchaseOrderDetail.errorCancellingOrder'));
             }
         } finally {
             setUpdating(false);
@@ -101,9 +104,9 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to export PDF.');
+                setError(axiosErr.response?.data?.message || t('modal.purchaseOrderDetail.failedToExportPdf'));
             } else {
-                setError('An error occurred while exporting PDF.');
+                setError(t('modal.purchaseOrderDetail.errorExportingPdf'));
             }
         } finally {
             setExporting(false);
@@ -112,13 +115,20 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
 
     const canSetOrdering = currentOrder.status === 0;
     const canCancel = currentOrder.status === 0 || currentOrder.status === 1;
+    
+    // Get current user role
+    const currentUser = authService.getUser();
+    const userRole = currentUser?.role || '';
+    
+    // Hide "Waiting for Ordering" button for Requester role
+    const showWaitingForOrderingButton = canSetOrdering && userRole !== 'Receiver';
 
     return (
         <>
             <div className="modal-overlay" onClick={onClose}>
                 <div className="modal-content modal-xlarge" onClick={e => e.stopPropagation()}>
                     <div className="modal-header">
-                        <h3>Purchase Order Details</h3>
+                        <h3>{t('modal.purchaseOrderDetail.title')}</h3>
                         <button className="modal-close" onClick={onClose}>✕</button>
                     </div>
 
@@ -138,40 +148,40 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                         {/* Order Info */}
                         <div className="detail-grid">
                             <div className="detail-field">
-                                <label>Title</label>
+                                <label>{t('form.title')}</label>
                                 <div className="detail-value">{currentOrder.title}</div>
                             </div>
                             <div className="detail-field">
-                                <label>Created By</label>
+                                <label>{t('form.createdBy')}</label>
                                 <div className="detail-value">{currentOrder.createdUserName}</div>
                             </div>
                             <div className="detail-field">
-                                <label>Reviewer</label>
+                                <label>{t('form.reviewer')}</label>
                                 <div className="detail-value">{currentOrder.reviewerName || '—'}</div>
                             </div>
                             <div className="detail-field">
-                                <label>Approver</label>
+                                <label>{t('form.approver')}</label>
                                 <div className="detail-value">{currentOrder.approverName || '—'}</div>
                             </div>
                         </div>
 
                         <div className="detail-field detail-full">
-                            <label>Description</label>
+                            <label>{t('form.description')}</label>
                             <div className="detail-value detail-text">{currentOrder.description}</div>
                         </div>
 
                         <div className="detail-grid">
                             <div className="detail-field">
-                                <label>Priority</label>
+                                <label>{t('form.priority')}</label>
                                 <div className="detail-value">
                                     {currentOrder.urgent === 1
-                                        ? <span className="urgent-badge">🔥 Urgent</span>
-                                        : <span className="normal-badge">Normal</span>
+                                        ? <span className="urgent-badge">🔥 {t('status.urgent')}</span>
+                                        : <span className="normal-badge">{t('status.normal')}</span>
                                     }
                                 </div>
                             </div>
                             <div className="detail-field">
-                                <label>Status</label>
+                                <label>{t('form.status')}</label>
                                 <div className="detail-value">
                                     <span className={`request-status-badge status-${currentOrder.status === 0 ? 'draft' : currentOrder.status === 1 ? 'waiting' : currentOrder.status === 2 ? 'approved' : 'cancelled'}`}>
                                         {currentOrder.statusText}
@@ -179,7 +189,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                 </div>
                             </div>
                             <div className="detail-field">
-                                <label>Total Price</label>
+                                <label>{t('form.totalPrice')}</label>
                                 <div className="detail-value">
                                     <span className="total-price-value">{formatVND(currentOrder.totalPrice)}</span>
                                 </div>
@@ -187,14 +197,14 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                         </div>
 
                         <div className="detail-field detail-full">
-                            <label>Reviewer Comment</label>
+                            <label>{t('form.reviewerComment')}</label>
                             <div className={`detail-value ${currentOrder.reviewerComment ? 'reviewer-comment-box' : 'detail-empty'}`}>
                                 {currentOrder.reviewerComment || '—'}
                             </div>
                         </div>
 
                         <div className="detail-field detail-full">
-                            <label>Ordering Comment</label>
+                            <label>{t('modal.purchaseOrderDetail.orderingComment')}</label>
                             <div className={`detail-value ${currentOrder.orderingComment ? 'reviewer-comment-box' : 'detail-empty'}`}>
                                 {currentOrder.orderingComment || '—'}
                             </div>
@@ -202,34 +212,34 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
 
                         <div className="detail-grid">
                             <div className="detail-field">
-                                <label>Created Date</label>
+                                <label>{t('form.createdDate')}</label>
                                 <div className="detail-value">{formatDate(currentOrder.createdDate)}</div>
                             </div>
                             <div className="detail-field">
-                                <label>Modified Date</label>
+                                <label>{t('form.modifiedDate')}</label>
                                 <div className="detail-value">{formatDate(currentOrder.modifiedDate)}</div>
                             </div>
                         </div>
 
                         {/* Products Table */}
                         <div className="detail-section">
-                            <h4>Products ({products.length})</h4>
+                            <h4>{t('modal.purchaseOrderDetail.productsCount', { count: products.length })}</h4>
                             {loadingProducts ? (
-                                <div className="table-loading">Loading products...</div>
+                                <div className="table-loading">{t('common.loadingProducts')}</div>
                             ) : products.length > 0 ? (
                                 <div className="selected-products-table">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
-                                                <th>Product Code</th>
-                                                <th>Product Name</th>
-                                                <th>Category</th>
-                                                <th>Unit</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Imported Date</th>
-                                                <th>Checked By</th>
-                                                <th>Comment</th>
+                                                <th>{t('table.productCode')}</th>
+                                                <th>{t('table.productName')}</th>
+                                                <th>{t('table.category')}</th>
+                                                <th>{t('table.unit')}</th>
+                                                <th>{t('table.price')}</th>
+                                                <th>{t('table.quantity')}</th>
+                                                <th>{t('modal.purchaseOrderDetail.importedDate')}</th>
+                                                <th>{t('modal.purchaseOrderDetail.checkedBy')}</th>
+                                                <th>{t('table.comment')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -250,20 +260,20 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                     </table>
                                 </div>
                             ) : (
-                                <div className="no-products-hint">No products in this order.</div>
+                                <div className="no-products-hint">{t('modal.purchaseOrderDetail.noProducts')}</div>
                             )}
                         </div>
                     </div>
 
                     <div className="modal-footer">
-                        <button className="btn-cancel" onClick={onClose}>Close</button>
+                        <button className="btn-cancel" onClick={onClose}>{t('button.close')}</button>
                         <button
                             className="btn-save"
                             onClick={handleExportPdf}
                             disabled={exporting}
                             style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
                         >
-                            {exporting ? 'Exporting...' : '📄 Export PDF'}
+                            {exporting ? t('button.exporting') : t('button.exportPdf')}
                         </button>
                         {canCancel && (
                             <button
@@ -271,17 +281,17 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                 onClick={handleCancel}
                                 disabled={updating}
                             >
-                                {updating ? 'Cancelling...' : '🚫 Cancel Order'}
+                                {updating ? t('button.cancelling') : t('button.cancelOrder')}
                             </button>
                         )}
-                        {canSetOrdering && (
+                        {showWaitingForOrderingButton && (
                             <button
                                 className="btn-save"
                                 onClick={handleSetOrdering}
                                 disabled={updating}
                                 style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
                             >
-                                {updating ? 'Updating...' : '📦 Waiting For Ordering'}
+                                {updating ? t('button.updating') : t('button.waitingForOrdering')}
                             </button>
                         )}
                         {currentOrder.status === 1 && (
@@ -290,7 +300,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                 onClick={() => setImportModalOpen(true)}
                                 disabled={updating}
                             >
-                                📥 Import Products
+                                {t('button.importProducts')}
                             </button>
                         )}
                     </div>

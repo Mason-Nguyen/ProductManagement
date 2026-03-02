@@ -13,6 +13,11 @@ const LoginLogPage: React.FC = () => {
     const userRole = currentUser?.role || '';
     const [logs, setLogs] = useState<LoginLogDto[]>([]);
     const [loading, setLoading] = useState(true);
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
+    const [dateError, setDateError] = useState('');
+    const [appliedFromDate, setAppliedFromDate] = useState('');
+    const [appliedToDate, setAppliedToDate] = useState('');
 
     const getNavItems = () => {
         return [
@@ -43,6 +48,94 @@ const LoginLogPage: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
+    const validateDateRange = (from: string, to: string): boolean => {
+        if (!from || !to) {
+            setDateError('');
+            return true;
+        }
+
+        const fromDateTime = new Date(from);
+        const toDateTime = new Date(to);
+
+        if (fromDateTime > toDateTime) {
+            setDateError(t('validation.fromDateMustBeBeforeToDate') || 'From date must be before to date');
+            return false;
+        }
+
+        // Calculate difference in months
+        const monthsDiff = (toDateTime.getFullYear() - fromDateTime.getFullYear()) * 12 + 
+                          (toDateTime.getMonth() - fromDateTime.getMonth());
+
+        if (monthsDiff > 3) {
+            setDateError(t('validation.dateRangeMax3Months') || 'Date range cannot exceed 3 months');
+            return false;
+        }
+
+        setDateError('');
+        return true;
+    };
+
+    const handleFromDateChange = (value: string) => {
+        setFromDate(value);
+        if (value && toDate) {
+            validateDateRange(value, toDate);
+        } else {
+            setDateError('');
+        }
+    };
+
+    const handleToDateChange = (value: string) => {
+        setToDate(value);
+        if (fromDate && value) {
+            validateDateRange(fromDate, value);
+        } else {
+            setDateError('');
+        }
+    };
+
+    const handleFilter = () => {
+        if (!fromDate && !toDate) {
+            setDateError(t('validation.selectDateRange') || 'Please select at least one date');
+            return;
+        }
+
+        if (fromDate && toDate && !validateDateRange(fromDate, toDate)) {
+            return;
+        }
+
+        setAppliedFromDate(fromDate);
+        setAppliedToDate(toDate);
+        setDateError('');
+    };
+
+    const handleReset = () => {
+        setFromDate('');
+        setToDate('');
+        setAppliedFromDate('');
+        setAppliedToDate('');
+        setDateError('');
+    };
+
+    const filteredLogs = logs.filter((log) => {
+        if (!appliedFromDate && !appliedToDate) return true;
+        
+        const logDate = new Date(log.actionTime);
+        
+        if (appliedFromDate && !appliedToDate) {
+            return logDate >= new Date(appliedFromDate);
+        }
+        
+        if (!appliedFromDate && appliedToDate) {
+            return logDate <= new Date(appliedToDate);
+        }
+        
+        if (appliedFromDate && appliedToDate) {
+            return logDate >= new Date(appliedFromDate) && logDate <= new Date(appliedToDate);
+        }
+        
+        return true;
+    });
+
     const formatDateTime = (dateStr: string) => {
         return new Date(dateStr).toLocaleString('vi-VN', {
             year: 'numeric',
@@ -68,23 +161,57 @@ const LoginLogPage: React.FC = () => {
             </div>
 
             <div className="dashboard-content fade-in">
-                {/* Stats */}
-                <div className="stats-grid">
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>📋</div>
-                        <div className="stat-value">{logs.length}</div>
-                        <div className="stat-label">{t('stat.recentLogs')}</div>
+                {/* Date Filter */}
+                <div className="content-card">
+                    <div className="table-toolbar">
+                        <div className="date-filter-group">
+                            <div className="date-filter-inputs">
+                                <label className="date-filter-label">
+                                    {t('filter.fromDate') || 'From Date'}:
+                                    <input
+                                        type="date"
+                                        className="date-input"
+                                        value={fromDate}
+                                        onChange={(e) => handleFromDateChange(e.target.value)}
+                                    />
+                                </label>
+                                <label className="date-filter-label">
+                                    {t('filter.toDate') || 'To Date'}:
+                                    <input
+                                        type="date"
+                                        className="date-input"
+                                        value={toDate}
+                                        onChange={(e) => handleToDateChange(e.target.value)}
+                                    />
+                                </label>
+                            </div>
+                            <div className="date-filter-actions">
+                                <button 
+                                    className="btn-filter" 
+                                    onClick={handleFilter}
+                                    disabled={!fromDate && !toDate}
+                                >
+                                    🔍 {t('common.filter')}
+                                </button>
+                                <button className="btn-reset" onClick={handleReset}>
+                                    🔄 {t('common.reset')}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>🟢</div>
-                        <div className="stat-value">{logs.filter(l => l.action === 1).length}</div>
-                        <div className="stat-label">{t('stat.logins')}</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔴</div>
-                        <div className="stat-value">{logs.filter(l => l.action === 2).length}</div>
-                        <div className="stat-label">{t('stat.logouts')}</div>
-                    </div>
+                    {dateError && (
+                        <div style={{ 
+                            margin: '0 1rem 1rem 1rem',
+                            padding: '0.75rem', 
+                            background: 'rgba(239, 68, 68, 0.1)', 
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                            borderRadius: '0.375rem',
+                            color: '#ef4444',
+                            fontSize: '0.875rem'
+                        }}>
+                            ⚠️ {dateError}
+                        </div>
+                    )}
                 </div>
 
                 {/* Text List */}
@@ -97,7 +224,7 @@ const LoginLogPage: React.FC = () => {
                         </div>
                     ) : (
                         <ul style={{ listStyle: 'none', padding: '1rem 1.5rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            {logs.map((log) => (
+                            {filteredLogs.map((log) => (
                                 <li key={log.id} style={{
                                     padding: '0.875rem 1.25rem',
                                     borderRadius: '0.5rem',

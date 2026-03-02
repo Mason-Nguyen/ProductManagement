@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PurchaseRequestDto, CreatePurchaseRequestDto, UpdatePurchaseRequestDto, AvailableProductDto, PurchaseProductDto } from '../services/purchase-request-service';
 import { purchaseRequestService } from '../services/purchase-request-service';
 import { formatVND } from '../utils/formatters';
@@ -22,6 +23,7 @@ interface PurchaseRequestModalProps {
 }
 
 const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onClose, onSave, editRequest }) => {
+    const { t } = useTranslation();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [urgent, setUrgent] = useState(0);
@@ -140,7 +142,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
         setError('');
 
         if (selectedProducts.length === 0) {
-            setError('Please add at least one product.');
+            setError(t('validation.addAtLeastOneProduct'));
             return;
         }
 
@@ -160,9 +162,9 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Operation failed.');
+                setError(axiosErr.response?.data?.message || t('validation.operationFailed'));
             } else {
-                setError('An error occurred.');
+                setError(t('validation.errorOccurred'));
             }
         } finally {
             setLoading(false);
@@ -186,7 +188,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content modal-xlarge" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>{isEdit ? 'Edit Purchase Request' : 'New Purchase Request'}</h3>
+                    <h3>{isEdit ? t('modal.editPurchaseRequest') : t('modal.newPurchaseRequest')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -201,12 +203,12 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                         {/* Request Info */}
                         <div className="modal-form-row">
                             <div className="modal-form-group" style={{ width: '100%' }}>
-                                <label>Title <span className="required">*</span></label>
+                                <label>{t('form.title')} <span className="required">*</span></label>
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={e => setTitle(e.target.value)}
-                                    placeholder="Enter request title"
+                                    placeholder={t('form.enterTitle')}
                                     required
                                 />
                             </div>
@@ -214,11 +216,11 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
 
                         <div className="modal-form-row">
                             <div className="modal-form-group" style={{ width: '100%' }}>
-                                <label>Description <span className="required">*</span></label>
+                                <label>{t('form.description')} <span className="required">*</span></label>
                                 <textarea
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
-                                    placeholder="Describe the purpose of this request..."
+                                    placeholder={t('form.enterDescription')}
                                     required
                                     rows={3}
                                 />
@@ -227,21 +229,21 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
 
                         <div className="modal-form-row">
                             <div className="modal-form-group">
-                                <label>Priority</label>
+                                <label>{t('form.priority')}</label>
                                 <div className="urgent-toggle">
                                     <button
                                         type="button"
                                         className={`toggle-btn ${urgent === 0 ? 'active' : ''}`}
                                         onClick={() => setUrgent(0)}
                                     >
-                                        Normal
+                                        {t('status.normal')}
                                     </button>
                                     <button
                                         type="button"
                                         className={`toggle-btn urgent ${urgent === 1 ? 'active' : ''}`}
                                         onClick={() => setUrgent(1)}
                                     >
-                                        🔥 Urgent
+                                        🔥 {t('status.urgent')}
                                     </button>
                                 </div>
                             </div>
@@ -251,7 +253,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                         {isEdit && editRequest?.reviewerComment && (
                             <div className="modal-form-row">
                                 <div className="modal-form-group" style={{ width: '100%' }}>
-                                    <label>Reviewer Comment</label>
+                                    <label>{t('request.reviewerComment')}</label>
                                     <div className="reviewer-comment-box">
                                         {editRequest.reviewerComment}
                                     </div>
@@ -262,7 +264,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                         {/* Products Section */}
                         <div className="products-section">
                             <div className="products-section-header">
-                                <h4>Products <span className="required">*</span></h4>
+                                <h4>{t('table.products')} <span className="required">*</span></h4>
                                 <button
                                     type="button"
                                     className="btn-add-product"
@@ -271,7 +273,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                         setCheckedProductIds(new Set());
                                     }}
                                 >
-                                    {showProductPicker ? '✕ Close' : '➕ Add Product'}
+                                    {showProductPicker ? `✕ ${t('common.close')}` : `➕ ${t('request.addProducts')}`}
                                 </button>
                             </div>
 
@@ -281,7 +283,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                     <div className="product-picker-toolbar">
                                         <input
                                             type="text"
-                                            placeholder="Search by product code or category..."
+                                            placeholder={t('modal.searchByCodeOrCategory')}
                                             value={productSearch}
                                             onChange={e => setProductSearch(e.target.value)}
                                             className="product-picker-search"
@@ -292,12 +294,12 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                             onClick={handleAddCheckedProducts}
                                             disabled={checkedProductIds.size === 0}
                                         >
-                                            ➕ Add Selected ({checkedProductIds.size})
+                                            ➕ {t('modal.addSelected')} ({checkedProductIds.size})
                                         </button>
                                     </div>
                                     <div className="product-picker-table-wrapper">
                                         {filteredAvailable.length === 0 ? (
-                                            <div className="product-picker-empty">No available products found</div>
+                                            <div className="product-picker-empty">{t('modal.noAvailableProducts')}</div>
                                         ) : (
                                             <table className="data-table product-picker-table">
                                                 <thead>
@@ -309,13 +311,13 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                                 onChange={e => handleToggleCheckAll(e.target.checked)}
                                                             />
                                                         </th>
-                                                        <th>Product Code</th>
-                                                        <th>Product Name</th>
-                                                        <th>Category</th>
-                                                        <th>Provider</th>
-                                                        <th>Unit</th>
-                                                        <th>Price</th>
-                                                        <th>Stock Status</th>
+                                                        <th>{t('table.productCode')}</th>
+                                                        <th>{t('table.productName')}</th>
+                                                        <th>{t('table.category')}</th>
+                                                        <th>{t('table.provider')}</th>
+                                                        <th>{t('table.unit')}</th>
+                                                        <th>{t('table.price')}</th>
+                                                        <th>{t('table.stockStatus')}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -359,14 +361,14 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                     <table className="data-table">
                                         <thead>
                                             <tr>
-                                                <th>Product Code</th>
-                                                <th>Product Name</th>
-                                                <th>Category</th>
-                                                <th>Unit</th>
-                                                <th>Price</th>
-                                                <th style={{ width: 100 }}>Min Stock</th>
-                                                <th style={{ width: 100 }}>Quantity</th>
-                                                <th>Line Total</th>
+                                                <th>{t('table.productCode')}</th>
+                                                <th>{t('table.productName')}</th>
+                                                <th>{t('table.category')}</th>
+                                                <th>{t('table.unit')}</th>
+                                                <th>{t('table.price')}</th>
+                                                <th style={{ width: 100 }}>{t('table.minStock')}</th>
+                                                <th style={{ width: 100 }}>{t('table.quantity')}</th>
+                                                <th>{t('table.lineTotal')}</th>
                                                 <th style={{ width: 50 }}></th>
                                             </tr>
                                         </thead>
@@ -404,7 +406,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                             type="button"
                                                             className="btn-remove-product"
                                                             onClick={() => handleRemoveProduct(p.productId)}
-                                                            title="Remove"
+                                                            title={t('request.removeProduct')}
                                                         >
                                                             🗑️
                                                         </button>
@@ -414,7 +416,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                         </tbody>
                                     </table>
                                     <div className="total-price-row">
-                                        <strong>Total Price:</strong>
+                                        <strong>{t('form.totalPrice')}:</strong>
                                         <span className="total-price-value">{formatVND(totalPrice)}</span>
                                     </div>
                                 </div>
@@ -422,16 +424,16 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
 
                             {selectedProducts.length === 0 && !showProductPicker && (
                                 <div className="no-products-hint">
-                                    Click "Add Product" to select products for this request.
+                                    {t('modal.clickAddProduct')}
                                 </div>
                             )}
                         </div>
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>{t('common.cancel')}</button>
                         <button type="submit" className="btn-save" disabled={loading}>
-                            {loading ? 'Saving...' : isEdit ? 'Update Request' : 'Create Request'}
+                            {loading ? t('button.saving') : isEdit ? t('button.updatePurchaseRequest') : t('button.createPurchaseRequest')}
                         </button>
                     </div>
                 </form>

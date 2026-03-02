@@ -1,18 +1,18 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
 import { authService } from '../../services/authService';
 
 const PurchaserDashboard: React.FC = () => {
     const user = authService.getUser();
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     const navItems = [
         { icon: '📊', label: t('nav.dashboard'), active: true },
-        { icon: '🛒', label: t('nav.purchaseOrders') },
-        { icon: '📋', label: t('nav.approved') },
-        { icon: '🏭', label: t('nav.providersManagement') },
-        { icon: '📜', label: 'Purchase History' },
+        { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/purchaser/providers') },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/purchaser/products') },
     ];
 
     return (

@@ -56,7 +56,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/products (only Status = true)
         [HttpGet]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver,Purchaser")]
         public async Task<IActionResult> GetAll()
         {
             var products = await _context.Products
@@ -70,7 +70,7 @@ namespace ProductManagement.Controllers
 
         // GET: api/products/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver")]
+        [Authorize(Roles = "Admin,Approver,Reviewer,Requester,Receiver,Purchaser")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await _context.Products
@@ -85,7 +85,7 @@ namespace ProductManagement.Controllers
 
         // POST: api/products
         [HttpPost]
-        [Authorize(Roles = "Requester")]
+        [Authorize(Roles = "Requester,Purchaser")]
         public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
         {
             var provider = await _context.Providers.FindAsync(request.ProviderId);
@@ -117,7 +117,7 @@ namespace ProductManagement.Controllers
 
         // PUT: api/products/{id}
         [HttpPut("{id}")]
-        [Authorize(Roles = "Requester")]
+        [Authorize(Roles = "Requester,Purchaser")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductRequest request)
         {
             var product = await _context.Products
@@ -149,7 +149,7 @@ namespace ProductManagement.Controllers
 
         // DELETE: api/products/{id} — Soft delete (set Status = false)
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Requester")]
+        [Authorize(Roles = "Requester,Purchaser")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var product = await _context.Products.FindAsync(id);

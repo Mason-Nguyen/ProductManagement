@@ -53,12 +53,19 @@ const ProvidersManagement: React.FC = () => {
                     { icon: '🏭', label: t('nav.providersManagement'), active: true },
                     { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/reviewer/products') },
                 ];
+            case 'Purchaser':
+                return [
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/purchaser') },
+                    { icon: '🏭', label: t('nav.providersManagement'), active: true },
+                    { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/purchaser/products') },
+                ];
             default:
                 return [
                     { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/requester') },
-                    { icon: '📋', label: t('nav.myRequests'), onClick: () => navigate('/requester/my-requests') },
+                    { icon: '📝', label: t('nav.myRequests'), onClick: () => navigate('/requester/my-requests') },
                     { icon: '🏭', label: t('nav.providersManagement'), active: true },
                     { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/requester/products') },
+                    { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/requester/purchase-orders') },
                 ];
         }
     };

@@ -39,7 +39,12 @@
     "update": "Cập nhật",
     "create": "Tạo mới",
     "view": "Xem",
-    "details": "Chi tiết"
+    "details": "Chi tiết",
+    "loadingProducts": "Đang tải sản phẩm..."
+  },
+  "filter": {
+    "fromDate": "Từ ngày",
+    "toDate": "Đến ngày"
   },
   "table": {
     "productCode": "Mã sản phẩm",
@@ -74,7 +79,8 @@
     "role": "Vai trò",
     "department": "Phòng ban",
     "departmentName": "Tên phòng ban",
-    "products": "Sản phẩm"
+    "products": "Sản phẩm",
+    "comment": "Nhận xét"
   },
   "status": {
     "draft": "Nháp",
@@ -136,7 +142,13 @@
     "enterFullName": "Nhập họ và tên",
     "enterDepartmentName": "Nhập tên phòng ban",
     "required": "*",
-    "optional": "(tùy chọn)"
+    "optional": "(tùy chọn)",
+    "priority": "Ưu tiên",
+    "totalPrice": "Tổng giá",
+    "createdBy": "Người tạo",
+    "reviewer": "Người xem xét",
+    "approver": "Người phê duyệt",
+    "status": "Trạng thái"
   },
   "modal": {
     "addProduct": "Thêm sản phẩm mới",
@@ -237,7 +249,35 @@
     "reviewerCommentLabel": "Nhận xét của người xem xét",
     "orderingComment": "Nhận xét đặt hàng",
     "checkedBy": "Người kiểm tra",
-    "comment": "Nhận xét"
+    "comment": "Nhận xét",
+    "reviewDetail": {
+      "updateComment": "💬 Cập nhật nhận xét",
+      "reject": "❌ Từ chối",
+      "approve": "✅ Phê duyệt"
+    },
+    "requestDetail": {
+      "productsCount": "Sản phẩm ({{count}})",
+      "failedToSubmit": "Không thể gửi yêu cầu.",
+      "errorSubmitting": "Đã xảy ra lỗi khi gửi yêu cầu.",
+      "convertToPurchaseOrder": "📦 Chuyển đổi thành đơn đặt hàng",
+      "sendForReview": "📤 Gửi xem xét"
+    },
+    "purchaseOrderDetail": {
+      "title": "Chi tiết đơn đặt hàng",
+      "orderStatusUpdated": "✅ Trạng thái đơn hàng đã được cập nhật thành Đang đặt hàng!",
+      "orderCancelled": "✅ Đơn hàng đã bị hủy.",
+      "failedToUpdateOrder": "Không thể cập nhật đơn hàng.",
+      "errorUpdatingOrder": "Đã xảy ra lỗi khi cập nhật đơn hàng.",
+      "failedToCancelOrder": "Không thể hủy đơn hàng.",
+      "errorCancellingOrder": "Đã xảy ra lỗi khi hủy đơn hàng.",
+      "failedToExportPdf": "Không thể xuất PDF.",
+      "errorExportingPdf": "Đã xảy ra lỗi khi xuất PDF.",
+      "orderingComment": "Nhận xét đặt hàng",
+      "productsCount": "Sản phẩm ({{count}})",
+      "importedDate": "Ngày nhập",
+      "checkedBy": "Người kiểm tra",
+      "noProducts": "Không có sản phẩm trong đơn hàng này."
+    }
   },
   "button": {
     "addProduct": "Thêm sản phẩm",
@@ -259,12 +299,17 @@
     "approve": "Phê duyệt",
     "reject": "Từ chối",
     "exportExcel": "Xuất Excel",
-    "exportPdf": "Xuất PDF",
+    "exportPdf": "📄 Xuất PDF",
     "saving": "Đang lưu...",
     "exporting": "Đang xuất...",
     "submitting": "Đang gửi...",
     "viewDetails": "Xem chi tiết",
-    "importProducts": "Nhập sản phẩm"
+    "importProducts": "📥 Nhập sản phẩm",
+    "close": "Đóng",
+    "cancelOrder": "🚫 Hủy đơn hàng",
+    "cancelling": "Đang hủy...",
+    "waitingForOrdering": "📦 Chờ đặt hàng",
+    "updating": "Đang cập nhật..."
   },
   "stat": {
     "totalProducts": "Tổng sản phẩm",
@@ -431,7 +476,10 @@
     "quantityInvalid": "Số lượng phải lớn hơn 0",
     "addAtLeastOneProduct": "Vui lòng thêm ít nhất một sản phẩm",
     "operationFailed": "Thao tác thất bại",
-    "errorOccurred": "Đã xảy ra lỗi"
+    "errorOccurred": "Đã xảy ra lỗi",
+    "fromDateMustBeBeforeToDate": "Ngày bắt đầu phải trước ngày kết thúc",
+    "dateRangeMax3Months": "Khoảng thời gian không được vượt quá 3 tháng",
+    "selectDateRange": "Vui lòng chọn ít nhất một ngày"
   },
   "notification": {
     "productCreated": "Tạo sản phẩm thành công",

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
 import type { ApprovalConfigDto } from '../services/approval-config-service';
 import { formatVND } from '../utils/formatters';
@@ -17,6 +18,7 @@ interface ReviewDetailModalProps {
 const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
     isOpen, onClose, request, userRole, onApprove, onReject, onUpdateComment, approvalConfigs
 }) => {
+    const { t } = useTranslation();
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -50,7 +52,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
     const handleApprove = async () => {
         if (!comment.trim()) {
-            setError('Please enter a ReviewerComment before approving.');
+            setError(t('modal.commentBeforeApproveReject'));
             return;
         }
         try {
@@ -62,9 +64,9 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to approve request.');
+                setError(axiosErr.response?.data?.message || t('modal.failedToApprove'));
             } else {
-                setError('An error occurred while approving.');
+                setError(t('modal.errorWhileApproving'));
             }
         } finally {
             setSubmitting(false);
@@ -73,7 +75,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
     const handleReject = async () => {
         if (!comment.trim()) {
-            setError('Please enter a ReviewerComment before rejecting.');
+            setError(t('modal.commentBeforeApproveReject'));
             return;
         }
         try {
@@ -85,9 +87,9 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to reject request.');
+                setError(axiosErr.response?.data?.message || t('modal.failedToReject'));
             } else {
-                setError('An error occurred while rejecting.');
+                setError(t('modal.errorWhileRejecting'));
             }
         } finally {
             setSubmitting(false);
@@ -96,7 +98,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
     const handleUpdateComment = async () => {
         if (!comment.trim()) {
-            setError('ReviewerComment cannot be empty.');
+            setError(t('modal.commentCannotBeEmpty'));
             return;
         }
         try {
@@ -104,13 +106,13 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
             setError('');
             setSuccess('');
             await onUpdateComment(request.id, comment.trim());
-            setSuccess('Comment updated successfully!');
+            setSuccess(t('modal.commentUpdatedSuccessfully'));
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to update comment.');
+                setError(axiosErr.response?.data?.message || t('modal.failedToUpdateComment'));
             } else {
-                setError('An error occurred while updating comment.');
+                setError(t('modal.errorWhileUpdating'));
             }
         } finally {
             setSubmitting(false);
@@ -121,7 +123,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content modal-xlarge" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>Request Details — Review</h3>
+                    <h3>{t('modal.requestDetailsReview')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -141,40 +143,40 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                     {/* Request Info */}
                     <div className="detail-grid">
                         <div className="detail-field">
-                            <label>Title</label>
+                            <label>{t('form.title')}</label>
                             <div className="detail-value">{request.title}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Created By</label>
+                            <label>{t('form.createdBy')}</label>
                             <div className="detail-value">{request.createdUserName}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Reviewer</label>
+                            <label>{t('form.reviewer')}</label>
                             <div className="detail-value">{request.reviewerName || '—'}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Approver</label>
+                            <label>{t('form.approver')}</label>
                             <div className="detail-value">{request.approverName || '—'}</div>
                         </div>
                     </div>
 
                     <div className="detail-field detail-full">
-                        <label>Description</label>
+                        <label>{t('form.description')}</label>
                         <div className="detail-value detail-text">{request.description}</div>
                     </div>
 
                     <div className="detail-grid">
                         <div className="detail-field">
-                            <label>Priority</label>
+                            <label>{t('form.priority')}</label>
                             <div className="detail-value">
                                 {request.urgent === 1
-                                    ? <span className="urgent-badge">🔥 Urgent</span>
-                                    : <span className="normal-badge">Normal</span>
+                                    ? <span className="urgent-badge">🔥 {t('status.urgent')}</span>
+                                    : <span className="normal-badge">{t('status.normal')}</span>
                                 }
                             </div>
                         </div>
                         <div className="detail-field">
-                            <label>Status</label>
+                            <label>{t('form.status')}</label>
                             <div className="detail-value">
                                 <span className={`request-status-badge status-${request.status === 0 ? 'draft' : request.status === 1 ? 'waiting' : request.status === 2 ? 'approved' : 'cancelled'}`}>
                                     {request.statusText}
@@ -185,10 +187,10 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
                     {/* Reviewer Comment — editable */}
                     <div className="detail-field detail-full">
-                        <label>Reviewer Comment <span style={{ color: '#94a3b8', fontSize: '0.85em' }}>({comment.length}/3000)</span></label>
+                        <label>{t('request.reviewerComment')} <span style={{ color: '#94a3b8', fontSize: '0.85em' }}>({comment.length}/3000)</span></label>
                         <textarea
                             className="form-textarea"
-                            placeholder="Enter your review comment here..."
+                            placeholder={t('modal.enterReviewComment')}
                             value={comment}
                             onChange={e => {
                                 setError('');
@@ -203,18 +205,18 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
 
                     {/* Products Table */}
                     <div className="detail-section">
-                        <h4>Products ({request.products.length})</h4>
+                        <h4>{t('modal.requestDetail.productsCount', { count: request.products.length })}</h4>
                         {request.products.length > 0 ? (
                             <div className="selected-products-table">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
-                                            <th>Product Code</th>
-                                            <th>Category</th>
-                                            <th>Unit</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Line Total</th>
+                                            <th>{t('table.productCode')}</th>
+                                            <th>{t('table.category')}</th>
+                                            <th>{t('table.unit')}</th>
+                                            <th>{t('table.price')}</th>
+                                            <th>{t('table.quantity')}</th>
+                                            <th>{t('table.lineTotal')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -231,31 +233,31 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                                     </tbody>
                                 </table>
                                 <div className="total-price-row">
-                                    <strong>Total Price:</strong>
+                                    <strong>{t('form.totalPrice')}:</strong>
                                     <span className="total-price-value">{formatVND(request.totalPrice)}</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="no-products-hint">No products in this request.</div>
+                            <div className="no-products-hint">{t('modal.noProductsInRequest')}</div>
                         )}
                     </div>
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn-cancel" onClick={onClose} disabled={submitting}>Close</button>
+                    <button className="btn-cancel" onClick={onClose} disabled={submitting}>{t('button.close')}</button>
                     <button
                         className="btn-outline"
                         onClick={handleUpdateComment}
                         disabled={submitting}
                     >
-                        {submitting ? 'Updating...' : '💬 Update Comment'}
+                        {submitting ? t('modal.updating') : t('modal.reviewDetail.updateComment')}
                     </button>
                     <button
                         className="btn-danger"
                         onClick={handleReject}
                         disabled={submitting}
                     >
-                        {submitting ? 'Rejecting...' : '❌ Reject'}
+                        {submitting ? t('modal.rejecting') : t('modal.reviewDetail.reject')}
                     </button>
                     {canApprove() && (
                         <button
@@ -263,7 +265,7 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                             onClick={handleApprove}
                             disabled={submitting}
                         >
-                            {submitting ? 'Approving...' : '✅ Approve'}
+                            {submitting ? t('modal.approving') : t('modal.reviewDetail.approve')}
                         </button>
                     )}
                 </div>

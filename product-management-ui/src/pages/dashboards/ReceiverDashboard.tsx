@@ -13,10 +13,6 @@ const ReceiverDashboard: React.FC = () => {
         { icon: '📊', label: t('nav.dashboard'), active: true },
         { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/receiver/purchase-orders') },
         { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/receiver/products') },
-        { icon: '📦', label: 'Incoming Shipments' },
-        { icon: '✅', label: 'Received Items' },
-        { icon: '🔄', label: 'Returns' },
-        { icon: '📜', label: 'Receiving History' },
     ];
 
     return (

@@ -22,6 +22,7 @@ const ApprovedRequests: React.FC = () => {
     const [approvalLogs, setApprovalLogs] = useState<ApprovalLogDto[]>([]);
     const [logsLoading, setLogsLoading] = useState(true);
     const [showSidebar, setShowSidebar] = useState(true);
+    const [activeFilter, setActiveFilter] = useState<'all' | 'urgent' | 'normal'>('all');
 
     const navItems = role === 'Reviewer' ? [
         { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/reviewer') },
@@ -69,9 +70,18 @@ const ApprovedRequests: React.FC = () => {
         fetchLogs();
     }, [fetchData, fetchLogs]);
 
-    const filteredRequests = requests.filter(
-        r => r.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleFilterClick = (filter: 'all' | 'urgent' | 'normal') => {
+        setActiveFilter(activeFilter === filter ? 'all' : filter);
+    };
+
+    const filteredRequests = requests.filter((r) => {
+        const matchesSearch = r.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesFilter = 
+            activeFilter === 'all' || 
+            (activeFilter === 'urgent' && r.urgent === 1) ||
+            (activeFilter === 'normal' && r.urgent === 0);
+        return matchesSearch && matchesFilter;
+    });
 
     const getUrgentBadge = (urgent: number) => {
         if (urgent === 1) return <span className="urgent-badge">🔥 {t('status.urgent')}</span>;
@@ -132,20 +142,32 @@ const ApprovedRequests: React.FC = () => {
                 <div style={{ flex: showSidebar ? 3 : 1, minWidth: 0 }}>
                     {/* Stats */}
                     <div className="stats-grid">
-                        <div className="stat-card">
+                        <div 
+                            className={`stat-card ${activeFilter === 'all' ? 'active' : ''}`}
+                            onClick={() => handleFilterClick('all')}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✅</div>
                             <div className="stat-value">{requests.length}</div>
                             <div className="stat-label">{t('stat.totalApproved')}</div>
                         </div>
-                        <div className="stat-card">
+                        <div 
+                            className={`stat-card ${activeFilter === 'urgent' ? 'active' : ''}`}
+                            onClick={() => handleFilterClick('urgent')}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🔥</div>
                             <div className="stat-value">{requests.filter(r => r.urgent === 1).length}</div>
                             <div className="stat-label">{t('stat.urgent')}</div>
                         </div>
-                        <div className="stat-card">
-                            <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>💰</div>
-                            <div className="stat-value">${(requests.reduce((sum, r) => sum + r.totalPrice, 0) / 1000).toFixed(1)}K</div>
-                            <div className="stat-label">{t('stat.totalValue')}</div>
+                        <div 
+                            className={`stat-card ${activeFilter === 'normal' ? 'active' : ''}`}
+                            onClick={() => handleFilterClick('normal')}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>📋</div>
+                            <div className="stat-value">{requests.filter(r => r.urgent === 0).length}</div>
+                            <div className="stat-label">{t('stat.normal')}</div>
                         </div>
                     </div>
 

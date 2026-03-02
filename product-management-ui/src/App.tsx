@@ -197,6 +197,18 @@ function App() {
           </ProtectedRoute>
         } />
 
+        {/* Purchaser Management Pages */}
+        <Route path="/purchaser/products" element={
+          <ProtectedRoute allowedRoles={['Purchaser']}>
+            <ProductsManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/purchaser/providers" element={
+          <ProtectedRoute allowedRoles={['Purchaser']}>
+            <ProvidersManagement />
+          </ProtectedRoute>
+        } />
+
         {/* Default redirect */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

@@ -19,6 +19,7 @@ const UsersManagement: React.FC = () => {
     const [editUser, setEditUser] = useState<UserDto | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<UserDto | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
 
     const navItems = [
         { icon: '📊', label: t('nav.dashboard') },
@@ -85,12 +86,19 @@ const UsersManagement: React.FC = () => {
         setModalOpen(true);
     };
 
-    const filteredUsers = users.filter(
-        (u) =>
+    const handleFilterClick = (status: boolean | null) => {
+        // Toggle filter: if clicking the same filter, clear it
+        setActiveFilter(activeFilter === status ? null : status);
+    };
+
+    const filteredUsers = users.filter((u) => {
+        const matchesSearch =
             u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            u.roleName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+            u.roleName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = activeFilter === null || u.status === activeFilter;
+        return matchesSearch && matchesStatus;
+    });
 
     const handleNavClick = (label: string) => {
         if (label === t('nav.dashboard')) {
@@ -118,17 +126,29 @@ const UsersManagement: React.FC = () => {
             <div className="dashboard-content fade-in">
                 {/* Stats */}
                 <div className="stats-grid">
-                    <div className="stat-card">
+                    <div
+                        className={`stat-card ${activeFilter === null ? 'active' : ''}`}
+                        onClick={() => handleFilterClick(null)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>👥</div>
                         <div className="stat-value">{users.length}</div>
                         <div className="stat-label">{t('stat.totalUsers')}</div>
                     </div>
-                    <div className="stat-card">
+                    <div
+                        className={`stat-card ${activeFilter === true ? 'active' : ''}`}
+                        onClick={() => handleFilterClick(true)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="stat-icon" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✅</div>
                         <div className="stat-value">{users.filter(u => u.status).length}</div>
                         <div className="stat-label">{t('stat.activeUsers')}</div>
                     </div>
-                    <div className="stat-card">
+                    <div
+                        className={`stat-card ${activeFilter === false ? 'active' : ''}`}
+                        onClick={() => handleFilterClick(false)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="stat-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>🚫</div>
                         <div className="stat-value">{users.filter(u => !u.status).length}</div>
                         <div className="stat-label">{t('stat.inactiveUsers')}</div>

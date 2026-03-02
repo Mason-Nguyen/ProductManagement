@@ -15,7 +15,7 @@ const ProductsManagement: React.FC = () => {
     const { t } = useTranslation();
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
-    const canEdit = userRole === 'Requester'; // Only Requester can edit products
+    const canEdit = userRole === 'Requester' || userRole === 'Purchaser'; // Requester and Purchaser can edit products
 
     const [products, setProducts] = useState<ProductDto[]>([]);
     const [providers, setProviders] = useState<ProviderDto[]>([]);
@@ -65,12 +65,19 @@ const ProductsManagement: React.FC = () => {
                     { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/receiver/purchase-orders') },
                     { icon: '📦', label: t('nav.productsManagement'), active: true },
                 ];
+            case 'Purchaser':
+                return [
+                    { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/purchaser') },
+                    { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/purchaser/providers') },
+                    { icon: '📦', label: t('nav.productsManagement'), active: true },
+                ];
             default:
                 return [
                     { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/requester') },
                     { icon: '📝', label: t('nav.myRequests'), onClick: () => navigate('/requester/my-requests') },
                     { icon: '🏭', label: t('nav.providersManagement'), onClick: () => navigate('/requester/providers') },
                     { icon: '📦', label: t('nav.productsManagement'), active: true },
+                    { icon: '📋', label: t('nav.purchaseOrders'), onClick: () => navigate('/requester/purchase-orders') },
                 ];
         }
     };

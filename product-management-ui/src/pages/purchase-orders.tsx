@@ -43,10 +43,7 @@ const PurchaseOrders: React.FC = () => {
     ] : [
         { icon: '📊', label: t('nav.dashboard'), onClick: () => navigate('/dashboard/receiver') },
         { icon: '📋', label: t('nav.purchaseOrders'), active: true },
-        { icon: '📦', label: 'Incoming Shipments' },
-        { icon: '✅', label: 'Received Items' },
-        { icon: '🔄', label: 'Returns' },
-        { icon: '📜', label: 'Receiving History' },
+        { icon: '📦', label: t('nav.productsManagement'), onClick: () => navigate('/receiver/products') },
     ];
 
     const fetchData = useCallback(async () => {

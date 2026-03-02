@@ -39,7 +39,12 @@
     "update": "Update",
     "create": "Create",
     "view": "View",
-    "details": "Details"
+    "details": "Details",
+    "loadingProducts": "Loading products..."
+  },
+  "filter": {
+    "fromDate": "From Date",
+    "toDate": "To Date"
   },
   "table": {
     "productCode": "Product Code",
@@ -74,7 +79,9 @@
     "role": "Role",
     "department": "Department",
     "departmentName": "Department Name",
-    "products": "Products"
+    "products": "Products",
+    "comment": "Comment",
+    "reviewerComment": "Reviewer Comment"
   },
   "status": {
     "draft": "Draft",
@@ -136,7 +143,13 @@
     "enterFullName": "Enter full name",
     "enterDepartmentName": "Enter department name",
     "required": "*",
-    "optional": "(optional)"
+    "optional": "(optional)",
+    "priority": "Priority",
+    "totalPrice": "Total Price",
+    "createdBy": "Created By",
+    "reviewer": "Reviewer",
+    "approver": "Approver",
+    "status": "Status"
   },
   "modal": {
     "addProduct": "Add New Product",
@@ -237,7 +250,35 @@
     "reviewerCommentLabel": "Reviewer Comment",
     "orderingComment": "Ordering Comment",
     "checkedBy": "Checked By",
-    "comment": "Comment"
+    "comment": "Comment",
+    "reviewDetail": {
+      "updateComment": "💬 Update Comment",
+      "reject": "❌ Reject",
+      "approve": "✅ Approve"
+    },
+    "requestDetail": {
+      "productsCount": "Products ({{count}})",
+      "failedToSubmit": "Failed to submit request.",
+      "errorSubmitting": "An error occurred while submitting the request.",
+      "convertToPurchaseOrder": "📦 Convert to Purchase Order",
+      "sendForReview": "📤 Send for Review"
+    },
+    "purchaseOrderDetail": {
+      "title": "Purchase Order Details",
+      "orderStatusUpdated": "✅ Order status updated to Ordering!",
+      "orderCancelled": "✅ Order has been cancelled.",
+      "failedToUpdateOrder": "Failed to update order.",
+      "errorUpdatingOrder": "An error occurred while updating the order.",
+      "failedToCancelOrder": "Failed to cancel order.",
+      "errorCancellingOrder": "An error occurred while cancelling the order.",
+      "failedToExportPdf": "Failed to export PDF.",
+      "errorExportingPdf": "An error occurred while exporting PDF.",
+      "orderingComment": "Ordering Comment",
+      "productsCount": "Products ({{count}})",
+      "importedDate": "Imported Date",
+      "checkedBy": "Checked By",
+      "noProducts": "No products in this order."
+    }
   },
   "button": {
     "addProduct": "Add Product",
@@ -259,12 +300,17 @@
     "approve": "Approve",
     "reject": "Reject",
     "exportExcel": "Export Excel",
-    "exportPdf": "Export PDF",
+    "exportPdf": "📄 Export PDF",
     "saving": "Saving...",
     "exporting": "Exporting...",
     "submitting": "Submitting...",
     "viewDetails": "View Details",
-    "importProducts": "Import Products"
+    "importProducts": "📥 Import Products",
+    "close": "Close",
+    "cancelOrder": "🚫 Cancel Order",
+    "cancelling": "Cancelling...",
+    "waitingForOrdering": "📦 Waiting For Ordering",
+    "updating": "Updating..."
   },
   "stat": {
     "totalProducts": "Total Products",
@@ -431,7 +477,10 @@
     "quantityInvalid": "Quantity must be greater than 0",
     "addAtLeastOneProduct": "Please add at least one product",
     "operationFailed": "Operation failed",
-    "errorOccurred": "An error occurred"
+    "errorOccurred": "An error occurred",
+    "fromDateMustBeBeforeToDate": "From date must be before to date",
+    "dateRangeMax3Months": "Date range cannot exceed 3 months",
+    "selectDateRange": "Please select at least one date"
   },
   "notification": {
     "productCreated": "Product created successfully",

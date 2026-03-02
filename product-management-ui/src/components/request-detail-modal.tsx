@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { PurchaseRequestDto } from '../services/purchase-request-service';
 import { purchaseOrderService } from '../services/purchase-order-service';
 import { formatVND } from '../utils/formatters';
@@ -12,6 +13,7 @@ interface RequestDetailModalProps {
 }
 
 const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose, request, onSubmit, currentUser }) => {
+    const { t } = useTranslation();
     const [submitting, setSubmitting] = useState(false);
     const [converting, setConverting] = useState(false);
     const [error, setError] = useState('');
@@ -45,9 +47,9 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to submit request.');
+                setError(axiosErr.response?.data?.message || t('modal.requestDetail.failedToSubmit'));
             } else {
-                setError('An error occurred while submitting the request.');
+                setError(t('modal.requestDetail.errorSubmitting'));
             }
         } finally {
             setSubmitting(false);
@@ -62,14 +64,14 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
             setError('');
             setSuccessMsg('');
             await purchaseOrderService.convertFromRequest(request.id);
-            setSuccessMsg('✅ Successfully converted to Purchase Order!');
+            setSuccessMsg(t('modal.successfullyConverted'));
             setOrderExists(true);
         } catch (err: unknown) {
             if (err && typeof err === 'object' && 'response' in err) {
                 const axiosErr = err as { response?: { data?: { message?: string } } };
-                setError(axiosErr.response?.data?.message || 'Failed to convert request.');
+                setError(axiosErr.response?.data?.message || t('modal.failedToConvert'));
             } else {
-                setError('An error occurred while converting the request.');
+                setError(t('modal.errorWhileConverting'));
             }
         } finally {
             setConverting(false);
@@ -83,7 +85,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content modal-xlarge" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3>Request Details</h3>
+                    <h3>{t('modal.requestDetails')}</h3>
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
 
@@ -103,40 +105,40 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                     {/* Request Info */}
                     <div className="detail-grid">
                         <div className="detail-field">
-                            <label>Title</label>
+                            <label>{t('form.title')}</label>
                             <div className="detail-value">{request.title}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Created By</label>
+                            <label>{t('form.createdBy')}</label>
                             <div className="detail-value">{request.createdUserName}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Reviewer</label>
+                            <label>{t('form.reviewer')}</label>
                             <div className="detail-value">{request.reviewerName || '—'}</div>
                         </div>
                         <div className="detail-field">
-                            <label>Approver</label>
+                            <label>{t('form.approver')}</label>
                             <div className="detail-value">{request.approverName || '—'}</div>
                         </div>
                     </div>
 
                     <div className="detail-field detail-full">
-                        <label>Description</label>
+                        <label>{t('form.description')}</label>
                         <div className="detail-value detail-text">{request.description}</div>
                     </div>
 
                     <div className="detail-grid">
                         <div className="detail-field">
-                            <label>Priority</label>
+                            <label>{t('form.priority')}</label>
                             <div className="detail-value">
                                 {request.urgent === 1
-                                    ? <span className="urgent-badge">🔥 Urgent</span>
-                                    : <span className="normal-badge">Normal</span>
+                                    ? <span className="urgent-badge">🔥 {t('status.urgent')}</span>
+                                    : <span className="normal-badge">{t('status.normal')}</span>
                                 }
                             </div>
                         </div>
                         <div className="detail-field">
-                            <label>Status</label>
+                            <label>{t('form.status')}</label>
                             <div className="detail-value">
                                 <span className={`request-status-badge status-${request.status === 0 ? 'draft' : request.status === 1 ? 'waiting' : request.status === 2 ? 'approved' : 'cancelled'}`}>
                                     {request.statusText}
@@ -146,7 +148,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                     </div>
 
                     <div className="detail-field detail-full">
-                        <label>Reviewer Comment</label>
+                        <label>{t('request.reviewerComment')}</label>
                         <div className={`detail-value ${request.reviewerComment ? 'reviewer-comment-box' : 'detail-empty'}`}>
                             {request.reviewerComment || '—'}
                         </div>
@@ -154,19 +156,19 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
 
                     {/* Products Table */}
                     <div className="detail-section">
-                        <h4>Products ({request.products.length})</h4>
+                        <h4>{t('modal.requestDetail.productsCount', { count: request.products.length })}</h4>
                         {request.products.length > 0 ? (
                             <div className="selected-products-table">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Category</th>
-                                            <th>Unit</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Line Total</th>
+                                            <th>{t('table.productCode')}</th>
+                                            <th>{t('table.productName')}</th>
+                                            <th>{t('table.category')}</th>
+                                            <th>{t('table.unit')}</th>
+                                            <th>{t('table.price')}</th>
+                                            <th>{t('table.quantity')}</th>
+                                            <th>{t('table.lineTotal')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -184,18 +186,18 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                                     </tbody>
                                 </table>
                                 <div className="total-price-row">
-                                    <strong>Total Price:</strong>
+                                    <strong>{t('form.totalPrice')}:</strong>
                                     <span className="total-price-value">{formatVND(request.totalPrice)}</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="no-products-hint">No products in this request.</div>
+                            <div className="no-products-hint">{t('modal.noProductsInRequest')}</div>
                         )}
                     </div>
                 </div>
 
                 <div className="modal-footer">
-                    <button className="btn-cancel" onClick={onClose}>Close</button>
+                    <button className="btn-cancel" onClick={onClose}>{t('button.close')}</button>
                     {canConvert && (
                         <button
                             className="btn-save"
@@ -203,7 +205,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                             disabled={converting}
                             style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)' }}
                         >
-                            {converting ? 'Converting...' : '📦 Convert to Purchase Order'}
+                            {converting ? t('modal.converting') : t('modal.requestDetail.convertToPurchaseOrder')}
                         </button>
                     )}
                     {canSubmit && (
@@ -212,7 +214,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                             onClick={handleSubmit}
                             disabled={submitting}
                         >
-                            {submitting ? 'Sending...' : '📤 Send for Review'}
+                            {submitting ? t('button.submitting') : t('modal.requestDetail.sendForReview')}
                         </button>
                     )}
                 </div>
