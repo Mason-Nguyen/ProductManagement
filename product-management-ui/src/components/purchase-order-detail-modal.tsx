@@ -121,7 +121,7 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
     const userRole = currentUser?.role || '';
     
     // Hide "Waiting for Ordering" button for Requester role
-    const showWaitingForOrderingButton = canSetOrdering && userRole !== 'Receiver';
+    const showWaitingForOrderingButton = canSetOrdering && userRole === 'Receiver';
 
     return (
         <>
