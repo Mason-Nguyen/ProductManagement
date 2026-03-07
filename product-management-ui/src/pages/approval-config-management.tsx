@@ -115,7 +115,7 @@ const ApprovalConfigManagement: React.FC = () => {
                             />
                         </div>
                         <button className="btn-add" onClick={openCreateModal}>
-                            <span>➕</span> Add Config
+                            <span>➕</span> {t('button.addConfig')}
                         </button>
                     </div>
 
@@ -127,8 +127,8 @@ const ApprovalConfigManagement: React.FC = () => {
                                 <thead>
                                     <tr>
                                         <th>{t('table.role')}</th>
-                                        <th>Min Amount</th>
-                                        <th>Max Amount</th>
+                                        <th>{t('table.minAmount')}</th>
+                                        <th>{t('table.maxAmount')}</th>
                                         <th>{t('common.actions')}</th>
                                     </tr>
                                 </thead>

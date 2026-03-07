@@ -269,13 +269,15 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                     >
                         {submitting ? t('modal.updating') : t('modal.reviewDetail.updateComment')}
                     </button>
-                    <button
-                        className="btn-danger"
-                        onClick={handleReject}
-                        disabled={submitting}
-                    >
-                        {submitting ? t('modal.rejecting') : t('modal.reviewDetail.reject')}
-                    </button>
+                    {canApprove() && (
+                        <button
+                            className="btn-danger"
+                            onClick={handleReject}
+                            disabled={submitting}
+                        >
+                            {submitting ? t('modal.rejecting') : t('modal.reviewDetail.reject')}
+                        </button>
+                    )}
                     {canApprove() && (
                         <button
                             className="btn-save"

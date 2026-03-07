@@ -37,7 +37,7 @@ const Login: React.FC = () => {
                 <div className="login-logo">
                     <div className="logo-icon">📦</div>
                     <h1>ProductManagement</h1>
-                    <p>Sign in to your account</p>
+                    <p>Đăng nhập</p>
                 </div>
 
                 {error && (
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
+                        <label htmlFor="email">Địa chỉ email:</label>
                         <input
                             id="email"
                             type="email"
@@ -62,7 +62,7 @@ const Login: React.FC = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label htmlFor="password">Mật khẩu:</label>
                         <input
                             id="password"
                             type="password"
@@ -81,7 +81,7 @@ const Login: React.FC = () => {
                                 onChange={(e) => setRememberMe(e.target.checked)}
                                 style={{ width: '1rem', height: '1rem', accentColor: '#6366f1', cursor: 'pointer' }}
                             />
-                            Remember me
+                            Ghi nhớ đăng nhập
                         </label>
                     </div>
 
