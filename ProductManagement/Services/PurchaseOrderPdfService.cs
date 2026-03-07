@@ -96,6 +96,10 @@ namespace ProductManagement.Services
 
             AddInfoRow(infoTable, "Created Date", order.CreatedDate.ToString("MMM dd, yyyy HH:mm"), fontBold, fontRegular);
             AddInfoRow(infoTable, "Modified Date", order.ModifiedDate.ToString("MMM dd, yyyy HH:mm"), fontBold, fontRegular);
+            AddInfoRow(infoTable, "Expected Total Price",
+                order.ExpectedTotalPrice?.ToString("N2") ?? "—", fontBold, fontRegular);
+            AddInfoRow(infoTable, "Expected Delivery Date",
+                order.ExpectedDeliveryDate?.ToString("MMM dd, yyyy") ?? "—", fontBold, fontRegular);
 
             document.Add(infoTable);
 

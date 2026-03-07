@@ -115,11 +115,11 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
 
     const canSetOrdering = currentOrder.status === 0;
     const canCancel = currentOrder.status === 0 || currentOrder.status === 1;
-    
+
     // Get current user role
     const currentUser = authService.getUser();
     const userRole = currentUser?.role || '';
-    
+
     // Hide "Waiting for Ordering" button for Requester role
     const showWaitingForOrderingButton = canSetOrdering && userRole === 'Receiver';
 
@@ -192,6 +192,23 @@ const PurchaseOrderDetailModal: React.FC<PurchaseOrderDetailModalProps> = ({ isO
                                 <label>{t('form.totalPrice')}</label>
                                 <div className="detail-value">
                                     <span className="total-price-value">{formatVND(currentOrder.totalPrice)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="detail-grid">
+                            <div className="detail-field">
+                                <label>{t('form.expectedTotalPrice')}</label>
+                                <div className="detail-value">
+                                    {currentOrder.expectedTotalPrice != null ? formatVND(currentOrder.expectedTotalPrice) : '—'}
+                                </div>
+                            </div>
+                            <div className="detail-field">
+                                <label>{t('form.expectedDeliveryDate')}</label>
+                                <div className="detail-value">
+                                    {currentOrder.expectedDeliveryDate
+                                        ? new Date(currentOrder.expectedDeliveryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                        : '—'}
                                 </div>
                             </div>
                         </div>

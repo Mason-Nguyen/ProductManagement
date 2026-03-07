@@ -58,8 +58,8 @@ const RejectedRequests: React.FC = () => {
 
     const filteredRequests = requests.filter((r) => {
         const matchesSearch = r.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = 
-            activeFilter === 'all' || 
+        const matchesFilter =
+            activeFilter === 'all' ||
             (activeFilter === 'urgent' && r.urgent === 1) ||
             (activeFilter === 'normal' && r.urgent === 0);
         return matchesSearch && matchesFilter;
@@ -92,7 +92,7 @@ const RejectedRequests: React.FC = () => {
             <div className="dashboard-content fade-in">
                 {/* Stats */}
                 <div className="stats-grid">
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 'all' ? 'active' : ''}`}
                         onClick={() => handleFilterClick('all')}
                         style={{ cursor: 'pointer' }}
@@ -101,7 +101,7 @@ const RejectedRequests: React.FC = () => {
                         <div className="stat-value">{requests.length}</div>
                         <div className="stat-label">{t('stat.totalRejected')}</div>
                     </div>
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 'urgent' ? 'active' : ''}`}
                         onClick={() => handleFilterClick('urgent')}
                         style={{ cursor: 'pointer' }}
@@ -110,7 +110,7 @@ const RejectedRequests: React.FC = () => {
                         <div className="stat-value">{requests.filter(r => r.urgent === 1).length}</div>
                         <div className="stat-label">{t('stat.urgent')}</div>
                     </div>
-                    <div 
+                    <div
                         className={`stat-card ${activeFilter === 'normal' ? 'active' : ''}`}
                         onClick={() => handleFilterClick('normal')}
                         style={{ cursor: 'pointer' }}
@@ -148,6 +148,8 @@ const RejectedRequests: React.FC = () => {
                                         <th>{t('table.priority')}</th>
                                         <th>{t('table.products')}</th>
                                         <th>{t('table.totalPrice')}</th>
+                                        <th>{t('table.expectedTotalPrice')}</th>
+                                        <th>{t('table.expectedDeliveryDate')}</th>
                                         <th>Rejected Date</th>
                                         <th>{t('common.actions')}</th>
                                     </tr>
@@ -155,7 +157,7 @@ const RejectedRequests: React.FC = () => {
                                 <tbody>
                                     {filteredRequests.length === 0 ? (
                                         <tr>
-                                            <td colSpan={8} className="table-empty">{t('page.noRequestsFound')}</td>
+                                            <td colSpan={10} className="table-empty">{t('page.noRequestsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredRequests.map(request => (
@@ -173,6 +175,8 @@ const RejectedRequests: React.FC = () => {
                                                 <td>{getUrgentBadge(request.urgent)}</td>
                                                 <td className="td-number">{request.products.length}</td>
                                                 <td className="td-price">{formatVND(request.totalPrice)}</td>
+                                                <td className="td-price">{request.expectedTotalPrice != null ? formatVND(request.expectedTotalPrice) : '—'}</td>
+                                                <td>{request.expectedDeliveryDate ? formatDate(request.expectedDeliveryDate) : '—'}</td>
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>
                                                     <div className="action-btns">

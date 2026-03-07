@@ -31,6 +31,8 @@ export interface PurchaseRequestDto {
     modifiedDate: string;
     reviewerComment: string | null;
     totalPrice: number;
+    expectedTotalPrice: number | null;
+    expectedDeliveryDate: string | null;
     products: PurchaseProductDto[];
 }
 
@@ -43,6 +45,8 @@ export interface CreatePurchaseRequestDto {
     title: string;
     description: string;
     urgent: number;
+    expectedTotalPrice?: number | null;
+    expectedDeliveryDate?: string | null;
     products: PurchaseProductItemDto[];
 }
 
@@ -50,6 +54,8 @@ export interface UpdatePurchaseRequestDto {
     title: string;
     description: string;
     urgent: number;
+    expectedTotalPrice?: number | null;
+    expectedDeliveryDate?: string | null;
     products: PurchaseProductItemDto[];
 }
 

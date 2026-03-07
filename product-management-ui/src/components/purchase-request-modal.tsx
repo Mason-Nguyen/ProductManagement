@@ -34,6 +34,8 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
     const [checkedProductIds, setCheckedProductIds] = useState<Set<string>>(new Set());
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [expectedTotalPrice, setExpectedTotalPrice] = useState<string>('');
+    const [expectedDeliveryDate, setExpectedDeliveryDate] = useState<string>('');
 
     const isEdit = !!editRequest;
 
@@ -66,11 +68,15 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                     quantityRequest: p.quantityRequest,
                 }))
             );
+            setExpectedTotalPrice(editRequest.expectedTotalPrice != null ? String(editRequest.expectedTotalPrice) : '');
+            setExpectedDeliveryDate(editRequest.expectedDeliveryDate ? editRequest.expectedDeliveryDate.substring(0, 10) : '');
         } else {
             setTitle('');
             setDescription('');
             setUrgent(0);
             setSelectedProducts([]);
+            setExpectedTotalPrice('');
+            setExpectedDeliveryDate('');
         }
         setError('');
         setProductSearch('');
@@ -152,6 +158,8 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                 title,
                 description,
                 urgent,
+                expectedTotalPrice: expectedTotalPrice ? parseFloat(expectedTotalPrice) : null,
+                expectedDeliveryDate: expectedDeliveryDate || null,
                 products: selectedProducts.map(p => ({
                     productId: p.productId,
                     quantityRequest: p.quantityRequest,
@@ -246,6 +254,28 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                         🔥 {t('status.urgent')}
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="modal-form-row">
+                            <div className="modal-form-group">
+                                <label>{t('form.expectedTotalPrice')}</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={expectedTotalPrice}
+                                    onChange={e => setExpectedTotalPrice(e.target.value)}
+                                    placeholder={t('form.enterExpectedTotalPrice')}
+                                />
+                            </div>
+                            <div className="modal-form-group">
+                                <label>{t('form.expectedDeliveryDate')}</label>
+                                <input
+                                    type="date"
+                                    value={expectedDeliveryDate}
+                                    onChange={e => setExpectedDeliveryDate(e.target.value)}
+                                />
                             </div>
                         </div>
 

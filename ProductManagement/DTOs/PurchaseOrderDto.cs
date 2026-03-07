@@ -21,6 +21,8 @@ namespace ProductManagement.DTOs
         public string? ReviewerComment { get; set; }
         public string? OrderingComment { get; set; }
         public decimal TotalPrice { get; set; }
+        public decimal? ExpectedTotalPrice { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
         public Guid PurchaseRequestId { get; set; }
     }
 

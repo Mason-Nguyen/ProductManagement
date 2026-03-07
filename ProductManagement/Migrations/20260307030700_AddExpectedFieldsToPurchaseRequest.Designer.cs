@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductManagement.Data;
 
@@ -11,9 +12,11 @@ using ProductManagement.Data;
 namespace ProductManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307030700_AddExpectedFieldsToPurchaseRequest")]
+    partial class AddExpectedFieldsToPurchaseRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,12 +229,6 @@ namespace ProductManagement.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ExpectedDeliveryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("ExpectedTotalPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
@@ -505,7 +502,7 @@ namespace ProductManagement.Migrations
                             Id = new Guid("a8b9c0d1-e2f3-4a4b-5c6d-7e8f9a0b1c2d"),
                             CreatedDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@productmanagement.com",
-                            Password = "$2a$11$cGpdPpT65WlLKFpDS0ePjO5B4Y51Xb9CVZKCGY4ZSeq8qYcKArj0u",
+                            Password = "$2a$11$abHmqV0yfr3hrdjNnzCc9uBI/kTfT5j3UW2XWXcFbMxIB5Ue.Kl6S",
                             Phone = "0123456789",
                             RoleId = new Guid("a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"),
                             Status = true,

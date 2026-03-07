@@ -18,6 +18,8 @@ namespace ProductManagement.DTOs
         public DateTime ModifiedDate { get; set; }
         public string? ReviewerComment { get; set; }
         public decimal TotalPrice { get; set; }
+        public decimal? ExpectedTotalPrice { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
         public List<PurchaseProductDto> Products { get; set; } = new();
     }
 
@@ -39,6 +41,8 @@ namespace ProductManagement.DTOs
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Urgent { get; set; }
+        public decimal? ExpectedTotalPrice { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
         public List<PurchaseProductItemDto> Products { get; set; } = new();
     }
 
@@ -47,6 +51,8 @@ namespace ProductManagement.DTOs
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Urgent { get; set; }
+        public decimal? ExpectedTotalPrice { get; set; }
+        public DateTime? ExpectedDeliveryDate { get; set; }
         public List<PurchaseProductItemDto> Products { get; set; } = new();
     }
 

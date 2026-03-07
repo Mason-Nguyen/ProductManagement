@@ -63,6 +63,8 @@ namespace ProductManagement.Controllers
                 ModifiedDate = pr.ModifiedDate,
                 ReviewerComment = pr.ReviewerComment,
                 TotalPrice = pr.TotalPrice,
+                ExpectedTotalPrice = pr.ExpectedTotalPrice,
+                ExpectedDeliveryDate = pr.ExpectedDeliveryDate,
                 Products = _context.PurchaseProducts
                     .Include(pp => pp.Product)
                     .Where(pp => pp.RequestId == pr.Id)

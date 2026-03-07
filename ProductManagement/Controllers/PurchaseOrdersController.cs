@@ -49,6 +49,8 @@ namespace ProductManagement.Controllers
             ReviewerComment = po.ReviewerComment,
             OrderingComment = po.OrderingComment,
             TotalPrice = po.TotalPrice,
+            ExpectedTotalPrice = po.ExpectedTotalPrice,
+            ExpectedDeliveryDate = po.ExpectedDeliveryDate,
             PurchaseRequestId = po.PurchaseRequestId
         };
 
@@ -238,6 +240,8 @@ namespace ProductManagement.Controllers
                 ReviewerComment = purchaseRequest.ReviewerComment,
                 OrderingComment = null,
                 TotalPrice = 0,
+                ExpectedTotalPrice = purchaseRequest.ExpectedTotalPrice,
+                ExpectedDeliveryDate = purchaseRequest.ExpectedDeliveryDate,
                 PurchaseRequestId = purchaseRequestId
             };
 

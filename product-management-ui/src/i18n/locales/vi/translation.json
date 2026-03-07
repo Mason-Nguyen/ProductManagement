@@ -80,7 +80,9 @@
     "department": "Phòng ban",
     "departmentName": "Tên phòng ban",
     "products": "Sản phẩm",
-    "comment": "Nhận xét"
+    "comment": "Nhận xét",
+    "expectedTotalPrice": "Tổng giá dự kiến",
+    "expectedDeliveryDate": "Ngày giao hàng dự kiến"
   },
   "status": {
     "draft": "Nháp",
@@ -148,7 +150,13 @@
     "createdBy": "Người tạo",
     "reviewer": "Người xem xét",
     "approver": "Người phê duyệt",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "createdDate": "Ngày tạo",
+    "modifiedDate": "Ngày sửa",
+    "expectedTotalPrice": "Tổng giá dự kiến",
+    "expectedDeliveryDate": "Ngày giao hàng dự kiến",
+    "enterExpectedTotalPrice": "Nhập tổng giá dự kiến",
+    "enterExpectedDeliveryDate": "Chọn ngày giao hàng dự kiến"
   },
   "modal": {
     "addProduct": "Thêm sản phẩm mới",

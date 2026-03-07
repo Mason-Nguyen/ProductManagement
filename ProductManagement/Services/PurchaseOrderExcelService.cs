@@ -51,6 +51,10 @@ namespace ProductManagement.Services
                 AddInfoRow(ws, ref currentRow, "Created Date", order.CreatedDate.ToString("MMM dd, yyyy HH:mm"), lightBg);
                 AddInfoRow(ws, ref currentRow, "Modified Date", order.ModifiedDate.ToString("MMM dd, yyyy HH:mm"), lightBg);
                 AddInfoRow(ws, ref currentRow, "Total Price", order.TotalPrice.ToString("N3"), lightBg);
+                AddInfoRow(ws, ref currentRow, "Expected Total Price",
+                    order.ExpectedTotalPrice?.ToString("N2") ?? "—", lightBg);
+                AddInfoRow(ws, ref currentRow, "Expected Delivery Date",
+                    order.ExpectedDeliveryDate?.ToString("MMM dd, yyyy") ?? "—", lightBg);
 
                 // ── Products Sub-header ──
                 var products = productsByOrder.GetValueOrDefault(order.Id, new List<PurchaseProductOrder>());

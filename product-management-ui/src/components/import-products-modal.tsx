@@ -131,6 +131,23 @@ const ImportProductsModal: React.FC<ImportProductsModalProps> = ({ isOpen, onClo
                 )}
 
                 <div className="modal-body">
+                    <div className="detail-grid" style={{ marginBottom: '1rem' }}>
+                        <div className="detail-field">
+                            <label>{t('form.expectedTotalPrice')}</label>
+                            <div className="detail-value">
+                                {order.expectedTotalPrice != null ? formatVND(order.expectedTotalPrice) : '—'}
+                            </div>
+                        </div>
+                        <div className="detail-field">
+                            <label>{t('form.expectedDeliveryDate')}</label>
+                            <div className="detail-value">
+                                {order.expectedDeliveryDate
+                                    ? new Date(order.expectedDeliveryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                    : '—'}
+                            </div>
+                        </div>
+                    </div>
+
                     {loadingProducts ? (
                         <div className="table-loading">{t('modal.loadingProducts')}</div>
                     ) : (

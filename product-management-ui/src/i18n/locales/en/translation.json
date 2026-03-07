@@ -81,7 +81,9 @@
     "departmentName": "Department Name",
     "products": "Products",
     "comment": "Comment",
-    "reviewerComment": "Reviewer Comment"
+    "reviewerComment": "Reviewer Comment",
+    "expectedTotalPrice": "Expected Total Price",
+    "expectedDeliveryDate": "Expected Delivery Date"
   },
   "status": {
     "draft": "Draft",
@@ -149,7 +151,13 @@
     "createdBy": "Created By",
     "reviewer": "Reviewer",
     "approver": "Approver",
-    "status": "Status"
+    "status": "Status",
+    "createdDate": "Created Date",
+    "modifiedDate": "Modified Date",
+    "expectedTotalPrice": "Expected Total Price",
+    "expectedDeliveryDate": "Expected Delivery Date",
+    "enterExpectedTotalPrice": "Enter expected total price",
+    "enterExpectedDeliveryDate": "Select expected delivery date"
   },
   "modal": {
     "addProduct": "Add New Product",

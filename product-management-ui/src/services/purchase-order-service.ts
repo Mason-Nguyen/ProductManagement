@@ -20,6 +20,8 @@ export interface PurchaseOrderDto {
     reviewerComment: string | null;
     orderingComment: string | null;
     totalPrice: number;
+    expectedTotalPrice: number | null;
+    expectedDeliveryDate: string | null;
     purchaseRequestId: string;
 }
 

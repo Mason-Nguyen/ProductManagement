@@ -71,6 +71,8 @@ namespace ProductManagement.Controllers
                 ModifiedDate = pr.ModifiedDate,
                 ReviewerComment = pr.ReviewerComment,
                 TotalPrice = pr.TotalPrice,
+                ExpectedTotalPrice = pr.ExpectedTotalPrice,
+                ExpectedDeliveryDate = pr.ExpectedDeliveryDate,
                 Products = _context.PurchaseProducts
                     .Include(pp => pp.Product)
                     .Where(pp => pp.RequestId == pr.Id)
@@ -166,7 +168,9 @@ namespace ProductManagement.Controllers
                 CreatedDate = now,
                 ModifiedDate = now,
                 ReviewerComment = null,
-                TotalPrice = Math.Round(totalPrice, 3)
+                TotalPrice = Math.Round(totalPrice, 3),
+                ExpectedTotalPrice = dto.ExpectedTotalPrice,
+                ExpectedDeliveryDate = dto.ExpectedDeliveryDate
             };
 
             _context.PurchaseRequests.Add(purchaseRequest);
@@ -234,6 +238,8 @@ namespace ProductManagement.Controllers
             request.Status = 0; // Reset to Draft on update
             request.ModifiedDate = DateTime.UtcNow;
             request.TotalPrice = Math.Round(totalPrice, 3);
+            request.ExpectedTotalPrice = dto.ExpectedTotalPrice;
+            request.ExpectedDeliveryDate = dto.ExpectedDeliveryDate;
 
             // Replace products: remove old, add new
             var existingProducts = await _context.PurchaseProducts

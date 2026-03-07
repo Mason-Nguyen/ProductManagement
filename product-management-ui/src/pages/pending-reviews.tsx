@@ -150,6 +150,8 @@ const PendingReviews: React.FC = () => {
                                         <th>{t('table.priority')}</th>
                                         <th>{t('table.products')}</th>
                                         <th>{t('table.totalPrice')}</th>
+                                        <th>{t('table.expectedTotalPrice')}</th>
+                                        <th>{t('table.expectedDeliveryDate')}</th>
                                         <th>{t('table.createdDate')}</th>
                                         <th>{t('table.modifiedDate')}</th>
                                         <th>{t('common.actions')}</th>
@@ -158,7 +160,7 @@ const PendingReviews: React.FC = () => {
                                 <tbody>
                                     {filteredRequests.length === 0 ? (
                                         <tr>
-                                            <td colSpan={8} className="table-empty">{t('page.noRequestsFound')}</td>
+                                            <td colSpan={10} className="table-empty">{t('page.noRequestsFound')}</td>
                                         </tr>
                                     ) : (
                                         filteredRequests.map(request => (
@@ -175,6 +177,8 @@ const PendingReviews: React.FC = () => {
                                                 <td>{getUrgentBadge(request.urgent)}</td>
                                                 <td className="td-number">{request.products.length}</td>
                                                 <td className="td-price">{formatVND(request.totalPrice)}</td>
+                                                <td className="td-price">{request.expectedTotalPrice != null ? formatVND(request.expectedTotalPrice) : '—'}</td>
+                                                <td>{request.expectedDeliveryDate ? formatDate(request.expectedDeliveryDate) : '—'}</td>
                                                 <td>{formatDate(request.createdDate)}</td>
                                                 <td>{formatDate(request.modifiedDate)}</td>
                                                 <td>

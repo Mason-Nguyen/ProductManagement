@@ -147,6 +147,23 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({ isOpen, onClose
                         </div>
                     </div>
 
+                    <div className="detail-grid">
+                        <div className="detail-field">
+                            <label>{t('form.expectedTotalPrice')}</label>
+                            <div className="detail-value">
+                                {request.expectedTotalPrice != null ? formatVND(request.expectedTotalPrice) : '—'}
+                            </div>
+                        </div>
+                        <div className="detail-field">
+                            <label>{t('form.expectedDeliveryDate')}</label>
+                            <div className="detail-value">
+                                {request.expectedDeliveryDate
+                                    ? new Date(request.expectedDeliveryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                    : '—'}
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="detail-field detail-full">
                         <label>{t('request.reviewerComment')}</label>
                         <div className={`detail-value ${request.reviewerComment ? 'reviewer-comment-box' : 'detail-empty'}`}>

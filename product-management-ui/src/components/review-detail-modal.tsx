@@ -185,6 +185,23 @@ const ReviewDetailModal: React.FC<ReviewDetailModalProps> = ({
                         </div>
                     </div>
 
+                    <div className="detail-grid">
+                        <div className="detail-field">
+                            <label>{t('form.expectedTotalPrice')}</label>
+                            <div className="detail-value">
+                                {request.expectedTotalPrice != null ? formatVND(request.expectedTotalPrice) : '—'}
+                            </div>
+                        </div>
+                        <div className="detail-field">
+                            <label>{t('form.expectedDeliveryDate')}</label>
+                            <div className="detail-value">
+                                {request.expectedDeliveryDate
+                                    ? new Date(request.expectedDeliveryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                    : '—'}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Reviewer Comment — editable */}
                     <div className="detail-field detail-full">
                         <label>{t('request.reviewerComment')} <span style={{ color: '#94a3b8', fontSize: '0.85em' }}>({comment.length}/3000)</span></label>
