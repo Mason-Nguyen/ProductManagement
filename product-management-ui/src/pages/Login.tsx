@@ -36,7 +36,7 @@ const Login: React.FC = () => {
             <div className="login-card">
                 <div className="login-logo">
                     <div className="logo-icon">📦</div>
-                    <h1>ProductManagement</h1>
+                    <h1>Tân Phú Hưng</h1>
                     <p>Đăng nhập</p>
                 </div>
 

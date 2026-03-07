@@ -67,7 +67,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, roleName, n
         <div className="dashboard-layout">
             <aside className="sidebar">
                 <div className="sidebar-header">
-                    <div className="app-name">ProductManagement</div>
+                    <div className="app-name">Tân Phú Hưng</div>
                     <div className="header-actions">
                         <LanguageSwitcher />
                         <span className="role-badge">{roleName}</span>
