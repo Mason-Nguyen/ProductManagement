@@ -313,6 +313,7 @@ namespace ProductManagement.Controllers
                 .Include(po => po.Reviewer)
                 .Include(po => po.Approver)
                 .Include(po => po.CreatedUser)
+                .Include(po => po.PurchaseRequest)
                 .FirstOrDefaultAsync(po => po.Id == id);
 
             if (order == null)
@@ -323,6 +324,21 @@ namespace ProductManagement.Controllers
 
             order.Status = 3; // Cancelled
             order.ModifiedDate = DateTime.UtcNow;
+
+            // Also cancel linked purchase request
+            order.PurchaseRequest.Status = 3; // Cancelled
+
+            // Create approval log entry
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            _context.ApprovalLogs.Add(new ApprovalLog
+            {
+                RequestId = order.PurchaseRequestId,
+                ApproverId = userId,
+                Action = 3, // Cancelled
+                ApproverComment = "Order cancelled by receiver",
+                LogTime = DateTime.UtcNow
+            });
+
             await _context.SaveChangesAsync();
 
             return Ok(MapToDto(order));

@@ -11,6 +11,7 @@ interface SelectedProduct {
     category: string;
     unit: string;
     price: number;
+    inStock: number;
     minInStock: number;
     quantityRequest: number;
 }
@@ -64,6 +65,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                     category: p.category,
                     unit: p.unit,
                     price: p.price,
+                    inStock: 0, // Not available in edit mode, set to 0
                     minInStock: 0, // Not available in edit mode, set to 0
                     quantityRequest: p.quantityRequest,
                 }))
@@ -124,6 +126,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                     category: p.category,
                     unit: p.unit,
                     price: p.price,
+                    inStock: p.inStock,
                     minInStock: p.minInStock,
                     quantityRequest: 1,
                 })),
@@ -347,6 +350,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                         <th>{t('table.provider')}</th>
                                                         <th>{t('table.unit')}</th>
                                                         <th>{t('table.price')}</th>
+                                                        <th>{t('table.inStock')}</th>
                                                         <th>{t('table.stockStatus')}</th>
                                                     </tr>
                                                 </thead>
@@ -371,6 +375,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                             <td>{p.providerName}</td>
                                                             <td>{p.unit}</td>
                                                             <td className="td-price">{formatVND(p.price)}</td>
+                                                            <td className="td-number">{p.inStock}</td>
                                                             <td>
                                                                 <span className={`stock-badge ${p.inStockStatus === 0 ? 'out-of-stock' : 'almost-out'}`}>
                                                                     {p.inStockStatus === 0 ? '🔴' : '🟡'} {p.inStockStatusText}
@@ -396,6 +401,7 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                 <th>{t('table.category')}</th>
                                                 <th>{t('table.unit')}</th>
                                                 <th>{t('table.price')}</th>
+                                                <th style={{ width: 100 }}>{t('table.inStock')}</th>
                                                 <th style={{ width: 100 }}>{t('table.minStock')}</th>
                                                 <th style={{ width: 100 }}>{t('table.quantity')}</th>
                                                 <th>{t('table.lineTotal')}</th>
@@ -410,6 +416,15 @@ const PurchaseRequestModal: React.FC<PurchaseRequestModalProps> = ({ isOpen, onC
                                                     <td><span className="category-tag">{p.category}</span></td>
                                                     <td>{p.unit}</td>
                                                     <td className="td-price">{formatVND(p.price)}</td>
+                                                    <td className="td-number">
+                                                        <input
+                                                            type="number"
+                                                            value={p.inStock}
+                                                            disabled
+                                                            className="qty-input"
+                                                            style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed' }}
+                                                        />
+                                                    </td>
                                                     <td className="td-number">
                                                         <input
                                                             type="number"

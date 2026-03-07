@@ -100,7 +100,6 @@ namespace ProductManagement.Controllers
                 .Include(pr => pr.Reviewer)
                 .Include(pr => pr.Approver)
                 .Include(pr => pr.CreatedUser)
-                .Where(pr => pr.Status != 3)
                 .OrderByDescending(pr => pr.ModifiedDate)
                 .ToListAsync();
 
@@ -292,10 +291,12 @@ namespace ProductManagement.Controllers
         [HttpGet("available-products")]
         public async Task<IActionResult> GetAvailableProducts([FromQuery] Guid? excludeRequestId)
         {
-            // Get product IDs already used in non-cancelled requests
+            // Get product IDs already used in active pipeline requests (Draft, Waiting, Converted)
             var usedProductIdsQuery = _context.PurchaseProducts
                 .Include(pp => pp.PurchaseRequest)
-                .Where(pp => pp.PurchaseRequest.Status != 3);
+                .Where(pp => pp.PurchaseRequest.Status == 0 ||   // Draft
+                             pp.PurchaseRequest.Status == 1 ||   // Waiting for Review
+                             pp.PurchaseRequest.Status == 5);    // Converted
 
             // If editing a request, exclude its own products from the "used" list
             if (excludeRequestId.HasValue)
